@@ -1,0 +1,41 @@
+<resources>
+    <!-- General -->
+    <string name="app_name">CodeDay Companion</string>
+    <string name="default_notif_channel">event_notifications</string>
+
+    <!-- Notifications -->
+    <string name="event_notifications_name">Event Notifications</string>
+    <string name="event_notifications_desc">These types of notifications will be sent during CodeDay, such as announcements from organizers and activity reminders.</string>
+
+    <!-- Authentication -->
+    <string name="welcome">Welcome to Companion!</string>
+    <string name="welcome_subtitle">To get started, tap the button below to scan your CodeDay ticket.</string>
+    <string name="scan_ticket">Scan Ticket</string>
+    <string name="loading_registration">We\'re fetching your ticket info!</string>
+
+    <!-- All Set -->
+    <string name="all_set_title">You\'re all set!</string>
+    <string name="all_set_subtitle">We\'ll notify you when it\'s time to check in. Meanwhile, why not share the CodeDay hype?!</string>
+    <string name="share_codeday">Tell your friends about CodeDay</string>
+
+    <!-- Check-in -->
+    <string name="checkin_title">Check-in Reminder</string>
+    <string name="checkin_body">Want to skip the check-in line? Tap here to check in right now.</string>
+
+    <!-- Feed -->
+    <string name="welcome_name">Hey there, %1s!</string>
+    <string name="countdown">There are <b>%1s</b> days until CodeDay!</string>
+
+    <!-- Static Cards -->
+    <string name="share_title">Share CodeDay</string>
+    <string name="share_desc">"We might be a little biased, but we think CodeDay is pretty fun. We designed it to be fun, in fact. But it's even more fun with friends, so tell a friend about CodeDay and help us help you help us all."</string>
+    <string name="coming_soon_title">Coming Soon…</string>
+    <string name="coming_soon_desc">Please note that this is the alpha version of Companion! Lots of things are still being added. That said, let us know in Slack if you find any bugs :)</string>
+    <string name="go_to_slack">Go to Slack</string>
+
+    <!-- Loading -->
+    <string name="loading_title">Just a sec…</string>
+
+    <!-- Lipsum -->
+    <string name="lorem_ipsum">Dolores quia qui excepturi maiores sint. Quia modi omnis qui quos consequatur animi fugiat omnis. Omnis iusto deleniti est sequi et earum explicabo animi. A accusamus aliquam inventore saepe voluptatem quasi. Provident natus est et placeat qui animi doloribus. Qui maxime fuga iure natus voluptatibus alias ipsum ut.</string>
+</resources>
