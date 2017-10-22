@@ -20,6 +20,7 @@ package org.srnd.companion
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.ContentResolver
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -58,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.main_fragment, fragment)
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        transaction.addToBackStack(null)
         transaction.commit()
     }
 
@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         title = getString(R.string.app_name)
 
-        // mTextMessage = findViewById<TextView>(R.id.message)
         navigation = findViewById<BottomNavigationView>(R.id.navigationBar)
         navigation!!.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
@@ -82,5 +81,14 @@ class MainActivity : AppCompatActivity() {
         settingsBundle.putBoolean(
                 ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
         ContentResolver.requestSync(accounts[0], "org.srnd.companion.sync.provider", settingsBundle)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(!(application as CompanionApplication).isSignedIn()) {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }

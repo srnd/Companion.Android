@@ -31,18 +31,18 @@ class CheckInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_check_in)
 
-        val layout = findViewById<RelativeLayout>(R.id.linearLayout)
-        val backgroundVideo = findViewById<VideoView>(R.id.background_video)
-        val uri = Uri.parse("android.resource://${packageName}/${R.raw.checkin}")
-
-        // backgroundVideo.minimumHeight = layout.height
-        // backgroundVideo.minimumWidth = layout.width
-
-        backgroundVideo.setVideoURI(uri)
-        backgroundVideo.start()
-
-        backgroundVideo.setOnCompletionListener {
-            backgroundVideo.start()
-        }
+//        val layout = findViewById<RelativeLayout>(R.id.linearLayout)
+//        val backgroundVideo = findViewById<VideoView>(R.id.background_video)
+//        val uri = Uri.parse("android.resource://${packageName}/${R.raw.checkin}")
+//
+//        // backgroundVideo.minimumHeight = layout.height
+//        // backgroundVideo.minimumWidth = layout.width
+//
+//        backgroundVideo.setVideoURI(uri)
+//        backgroundVideo.start()
+//
+//        backgroundVideo.setOnCompletionListener {
+//            backgroundVideo.start()
+//        }
     }
 }

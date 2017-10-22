@@ -60,6 +60,12 @@ class CompanionApplication : SugarApp() {
         }
     }
 
+    fun isSignedIn(): Boolean {
+        val accountManager = AccountManager.get(this)
+        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+        return accounts.isNotEmpty()
+    }
+
     fun getUserData(): JSONObject {
         if(cachedUserData == null) {
             val accountManager = AccountManager.get(this)

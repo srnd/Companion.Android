@@ -36,6 +36,7 @@ import org.srnd.companion.MainActivity
 import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.R
 import org.srnd.companion.fcm.FirebaseAssociator
+import org.srnd.companion.util.AccountAdder
 
 
 class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
@@ -87,21 +88,19 @@ class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
         Fuel.get("/ticket/${res.toString()}").responseJson { _, _, result ->
             val registration = result.get().obj()
 
-            val account = Account(registration["name"] as String, "codeday.org")
+            if(registration.getBoolean("ok")) {
+                AccountAdder.addAccount(this, registration)
+                // Geofencer.geofenceForAddress(this, registration.getJSONObject("event").getJSONObject("venue").getString("full_address"))
 
-            val extraData = Bundle()
-            extraData.putString("raw", registration.toString())
-            extraData.putString("event_id", registration.getJSONObject("event").getString("id"))
+                dialog!!.hide()
 
-            AccountManager.get(this).addAccountExplicitly(account, registration["id"] as String, extraData)
-            FirebaseAssociator.associateRegistration(registration["id"] as String)
-            // Geofencer.geofenceForAddress(this, registration.getJSONObject("event").getJSONObject("venue").getString("full_address"))
-
-            dialog!!.hide()
-
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                Toast.makeText(this, getString(R.string.error_scan), Toast.LENGTH_LONG).show()
+                finish()
+            }
         }
     }
 }
