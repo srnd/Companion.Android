@@ -32,6 +32,7 @@ import android.support.v4.content.ContextCompat
 import android.widget.Toast
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.extension.responseJson
+import org.srnd.companion.MainActivity
 import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.R
 import org.srnd.companion.fcm.FirebaseAssociator
@@ -98,7 +99,7 @@ class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
 
             dialog!!.hide()
 
-            val intent = Intent(this, FeedFragment::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }

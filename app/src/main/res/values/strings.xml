@@ -1,6 +1,7 @@
 <resources>
     <!-- General -->
     <string name="app_name">CodeDay Companion</string>
+    <string name="app_name_short">CodeDay</string>
     <string name="default_notif_channel">event_notifications</string>
 
     <!-- Notifications -->
