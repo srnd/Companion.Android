@@ -62,7 +62,7 @@ class AnnouncementCompanionCard(val context: Context, val announcement: Announce
             image.visibility = View.VISIBLE
             image.setImageDrawable(announcement.imageResource)
         } else {
-            divider.visibility = View.VISIBLE
+            if(announcement.linkText != null && announcement.linkUri != null) divider.visibility = View.VISIBLE
             image.visibility = View.GONE
         }
     }

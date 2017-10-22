@@ -22,6 +22,8 @@ import android.accounts.Account
 import android.accounts.AccountAuthenticatorResponse
 import android.content.Context
 import android.os.Bundle
+import com.orm.SugarRecord
+import org.srnd.companion.models.Announcement
 
 class CompanionAuthenticator(context: Context?) : AbstractAccountAuthenticator(context) {
     override fun getAuthTokenLabel(authTokenType: String?): String {
@@ -46,6 +48,12 @@ class CompanionAuthenticator(context: Context?) : AbstractAccountAuthenticator(c
 
     override fun editProperties(response: AccountAuthenticatorResponse?, accountType: String?): Bundle {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getAccountRemovalAllowed(response: AccountAuthenticatorResponse?, account: Account?): Bundle {
+        val res = super.getAccountRemovalAllowed(response, account)
+        SugarRecord.deleteAll(Announcement::class.java)
+        return res
     }
 
     override fun addAccount(response: AccountAuthenticatorResponse?, accountType: String?, authTokenType: String?, requiredFeatures: Array<out String>?, options: Bundle?): Bundle {

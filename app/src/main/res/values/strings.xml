@@ -37,5 +37,11 @@
     <string name="loading_title">Just a sec…</string>
 
     <!-- Lipsum -->
-    <string name="lorem_ipsum">Dolores quia qui excepturi maiores sint. Quia modi omnis qui quos consequatur animi fugiat omnis. Omnis iusto deleniti est sequi et earum explicabo animi. A accusamus aliquam inventore saepe voluptatem quasi. Provident natus est et placeat qui animi doloribus. Qui maxime fuga iure natus voluptatibus alias ipsum ut.</string>
+    <string name="lorem_ipsum">fluff furries dragon Anthrocon dragon husky Biggest Little Fur Con Midwest FurFest handpaws jackal bork *hugs* yap fursuit everyfur footpaws dragon bark fursuit Midwest FurFest bark o.o Biggest Little Fur Con meow paws fursuit paws *hugs* fursona paws tails everyfur fox Biggest Little Fur Con bork footpaws fursuit handpaws paw bork purr fandom goat *hugs* fursuiter convention *hugs* furry trash trash panda footpaws convention fursuiter Anthrocon 🐺 furry Midwest FurFest Midwest</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <!-- Navigation -->
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_schedule">Schedule</string>
+    <string name="title_checkin">Check-in</string>
 </resources>

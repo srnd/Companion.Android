@@ -15,19 +15,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.srnd.companion
+package org.srnd.companion.fragments
 
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.*
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
-import com.github.kittinunf.fuel.Fuel
-import com.orm.SugarDb
 import com.orm.SugarRecord
 import org.srnd.companion.cards.AnnouncementCompanionCard
 import org.srnd.companion.cards.CompanionCard
@@ -36,11 +32,15 @@ import org.srnd.companion.cards.CountdownCompanionCard
 import org.srnd.companion.cards.adapters.FeedAdapter
 import org.srnd.companion.models.Announcement
 import android.support.v4.widget.SwipeRefreshLayout
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import org.srnd.companion.R
 
 
-class FeedActivity : AppCompatActivity() {
-    var recycler: RecyclerView? = null
-    var refresher: SwipeRefreshLayout? = null
+class FeedFragment : Fragment() {
+    private var recycler: RecyclerView? = null
+    private var refresher: SwipeRefreshLayout? = null
 
     val syncFinishReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -49,42 +49,39 @@ class FeedActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_feed)
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater!!.inflate(R.layout.fragment_feed, container, false)
 
-        recycler = findViewById<RecyclerView>(R.id.recycler)
+        recycler = view.findViewById<RecyclerView>(R.id.recycler)
 
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         recycler!!.layoutManager = layoutManager
         recycler!!.setHasFixedSize(true)
 
-        refresher = findViewById<SwipeRefreshLayout>(R.id.refresher)
+        refresher = view.findViewById<SwipeRefreshLayout>(R.id.refresher)
         refresher!!.setColorSchemeResources(R.color.colorPrimary, R.color.colorGreen, R.color.colorBlue)
         refresher!!.setOnRefreshListener {
             refresh()
         }
 
-        refresher!!.isRefreshing = true
-        refresh()
-
         initData()
-        Log.d("asdasd", "oh no")
+        return view
     }
 
     override fun onResume() {
         super.onResume()
-        registerReceiver(syncFinishReceiver, IntentFilter("SYNC_FINISHED"))
+        context.registerReceiver(syncFinishReceiver, IntentFilter("SYNC_FINISHED"))
     }
 
     override fun onPause() {
         super.onPause()
-        unregisterReceiver(syncFinishReceiver)
+        context.unregisterReceiver(syncFinishReceiver)
     }
 
     fun refresh() {
-        val accountManager = AccountManager.get(this)
+        val accountManager = AccountManager.get(context)
         val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
 
         val settingsBundle = Bundle()
@@ -101,7 +98,7 @@ class FeedActivity : AppCompatActivity() {
                 message = getString(R.string.share_desc),
                 linkText = getString(R.string.share_title),
                 linkUri = "https://codeday.org/share",
-                imageResource = getDrawable(R.drawable.codeday_header)
+                imageResource = context.getDrawable(R.drawable.codeday_header)
         )
 
         val comingSoonAnnouncement: Announcement = Announcement(
@@ -114,14 +111,14 @@ class FeedActivity : AppCompatActivity() {
         val announcements = SugarRecord.listAll(Announcement::class.java)
 
         val cards: MutableList<CompanionCard> = mutableListOf(
-                CompanionWelcomeCard(this),
-                CountdownCompanionCard(this),
-                AnnouncementCompanionCard(this, shareAnnouncement),
-                AnnouncementCompanionCard(this, comingSoonAnnouncement)
+                CompanionWelcomeCard(context),
+                CountdownCompanionCard(context),
+                AnnouncementCompanionCard(context, shareAnnouncement),
+                AnnouncementCompanionCard(context, comingSoonAnnouncement)
         )
 
         announcements.forEach { announcement ->
-            cards.add(AnnouncementCompanionCard(this, announcement))
+            cards.add(AnnouncementCompanionCard(context, announcement))
         }
 
         val adapter = FeedAdapter(cards)

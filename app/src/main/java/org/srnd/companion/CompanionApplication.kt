@@ -19,6 +19,7 @@ package org.srnd.companion
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -54,6 +55,7 @@ class CompanionApplication : SugarApp() {
             eventNotifsChannel = NotificationChannel(eventNotifsChannelId, eventNotifsName, eventNotifsImportance)
             eventNotifsChannel.description = eventNotifsDesc
             eventNotifsChannel.lightColor = Color.RED
+            eventNotifsChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             notifManager.createNotificationChannel(eventNotifsChannel)
         }
     }

@@ -19,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
         val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
 
         if(accounts.size > 0) {
-            val intent = Intent(this, FeedActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }

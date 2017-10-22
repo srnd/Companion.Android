@@ -22,8 +22,6 @@ import android.app.Activity
 import android.os.Bundle
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
-import android.Manifest.permission
-import android.Manifest.permission.WRITE_CALENDAR
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.app.ProgressDialog
@@ -31,16 +29,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.widget.Spinner
 import android.widget.Toast
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.extension.responseJson
-import com.github.kittinunf.fuel.core.FuelManager
-import org.srnd.companion.FeedActivity
+import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.R
-import org.srnd.companion.dayof.AllSetActivity
 import org.srnd.companion.fcm.FirebaseAssociator
-import org.srnd.companion.util.Geofencer
 
 
 class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
@@ -104,7 +98,7 @@ class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
 
             dialog!!.hide()
 
-            val intent = Intent(this, FeedActivity::class.java)
+            val intent = Intent(this, FeedFragment::class.java)
             startActivity(intent)
             finish()
         }

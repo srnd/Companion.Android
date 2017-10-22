@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.srnd.companion">
 
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:name=".CompanionApplication"
@@ -23,10 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".FeedActivity"
-            android:configChanges="orientation"/>
-
         <activity android:name=".dayof.CheckInActivity" />
         <activity android:name=".auth.TicketScanActivity" />
         <activity android:name=".dayof.AllSetActivity" />
@@ -40,29 +36,34 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-
         <service android:name=".fcm.CompanionFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
         <service
-            android:name="org.srnd.companion.sync.CompanionSyncService"
+            android:name=".sync.CompanionSyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
+        </service>
+        <service android:name=".fcm.CompanionMessageService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
         </service>
 
         <provider
-            android:name="org.srnd.companion.sync.CompanionContentProvider"
+            android:name=".sync.CompanionContentProvider"
             android:authorities="org.srnd.companion.sync.provider"
             android:exported="false"
-            android:syncable="true"/>
+            android:syncable="true" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel"
@@ -73,11 +74,22 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
+        <meta-data
+            android:name="DATABASE"
+            android:value="companion.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="5" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="org.srnd.companion.models" />
 
-        <meta-data android:name="DATABASE" android:value="companion.db" />
-        <meta-data android:name="VERSION" android:value="5" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="org.srnd.companion.models" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"></activity>
     </application>
 
 </manifest>
