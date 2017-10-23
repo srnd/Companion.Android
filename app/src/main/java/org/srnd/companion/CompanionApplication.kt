@@ -22,23 +22,38 @@ import android.accounts.AccountManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.BroadcastReceiver
+import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import android.os.Bundle
 import com.facebook.stetho.Stetho
 import com.github.kittinunf.fuel.android.core.Json
 import com.github.kittinunf.fuel.core.FuelManager
 import com.orm.SugarApp
 import com.orm.SugarDb
 import com.orm.SugarRecord
+import net.danlew.android.joda.JodaTimeAndroid
+import org.joda.time.Chronology
+import org.joda.time.DateTime
 import org.json.JSONObject
 import org.srnd.companion.models.Announcement
+import org.srnd.companion.sync.CompanionSyncAdapter
 
 class CompanionApplication : SugarApp() {
-    var cachedUserData: JSONObject? = null
+    private var cachedUserData: JSONObject? = null
+
+    val syncFinishReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            refreshUserData()
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
+        JodaTimeAndroid.init(this)
 
         if(BuildConfig.DEBUG) Stetho.initializeWithDefaults(this)
         FuelManager.instance.basePath = "https://app.codeday.vip/api"
@@ -58,6 +73,24 @@ class CompanionApplication : SugarApp() {
             eventNotifsChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             notifManager.createNotificationChannel(eventNotifsChannel)
         }
+
+        registerReceiver(syncFinishReceiver, CompanionSyncAdapter.USER_SYNC_FINISHED)
+    }
+
+    fun sync() {
+        val accountManager = AccountManager.get(this)
+        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+
+        val settingsBundle = Bundle()
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true)
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
+        ContentResolver.requestSync(accounts[0], "org.srnd.companion.sync.provider", settingsBundle)
+    }
+
+    fun getCodeDayDate(): DateTime {
+        return DateTime(getUserData().getJSONObject("event").getLong("starts_at") * 1000L)
     }
 
     fun isSignedIn(): Boolean {
@@ -66,13 +99,14 @@ class CompanionApplication : SugarApp() {
         return accounts.isNotEmpty()
     }
 
-    fun getUserData(): JSONObject {
-        if(cachedUserData == null) {
-            val accountManager = AccountManager.get(this)
-            val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
-            cachedUserData = JSONObject(accountManager.getUserData(accounts[0], "raw"))
-        }
+    fun refreshUserData() {
+        val accountManager = AccountManager.get(this)
+        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+        cachedUserData = JSONObject(accountManager.getUserData(accounts[0], "raw"))
+    }
 
+    fun getUserData(): JSONObject {
+        if(cachedUserData == null) refreshUserData()
         return cachedUserData!!
     }
 }

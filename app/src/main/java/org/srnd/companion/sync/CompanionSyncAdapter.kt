@@ -19,49 +19,62 @@ package org.srnd.companion.sync
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.content.AbstractThreadedSyncAdapter
-import android.content.ContentProviderClient
-import android.content.Context
-import android.content.SyncResult
+import android.content.*
 import android.os.Bundle
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.extension.responseJson
 import com.orm.SugarRecord
+import org.srnd.companion.CompanionApplication
 import org.srnd.companion.models.Announcement
-import android.content.Intent
-
 
 
 class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThreadedSyncAdapter(context, autoInit) {
+    companion object {
+        val SYNC_FINISHED = IntentFilter("SYNC_FINISHED")
+        val USER_SYNC_FINISHED = IntentFilter("USER_SYNC_FINISHED")
+    }
+
     override fun onPerformSync(account: Account?, extras: Bundle?, authority: String?, provider: ContentProviderClient?, syncResult: SyncResult?) {
         val accountManager = AccountManager.get(context)
+        val app = context.applicationContext as CompanionApplication
 
-        Fuel.get("/announcements/${accountManager.getUserData(account, "event_id")}").responseJson { _, _, result ->
-            val announcements = result.get().array()
+        Fuel.get("/ticket/${app.getUserData().getString("id")}").responseJson { _, _, userRes ->
+            val res = userRes.get().obj()
 
-            for(i in 0 until announcements.length()) {
-                val announcementObj = announcements.getJSONObject(i)
-                val existingAnnouncements = SugarRecord.count<Announcement>(Announcement::class.java, "clear_Id = ?", arrayOf(announcementObj.getString("id")))
+            if(res.getBoolean("ok")) {
+                accountManager.setUserData(account, "raw", userRes.get().obj().toString())
 
-                if(existingAnnouncements == 0L) {
-                    val announcement = Announcement(
-                            clearId = announcementObj.getString("id"),
-                            title = "Announcement",
-                            message = announcementObj.getString("body")
-                    )
-
-                    if(!announcementObj.isNull("link")) {
-                        val link = announcementObj.getJSONObject("link")
-                        announcement.linkText = link.getString("text")
-                        announcement.linkUri = link.getString("url")
-                    }
-
-                    announcement.save()
-                }
+                val i = Intent("USER_SYNC_FINISHED")
+                context.sendBroadcast(i)
             }
 
-            val i = Intent("SYNC_FINISHED")
-            context.sendBroadcast(i)
+            Fuel.get("/announcements/${app.getUserData().getJSONObject("event").getString("id")}").responseJson { _, _, result ->
+                val announcements = result.get().array()
+
+                for(i in 0 until announcements.length()) {
+                    val announcementObj = announcements.getJSONObject(i)
+                    val existingAnnouncements = SugarRecord.count<Announcement>(Announcement::class.java, "clear_Id = ?", arrayOf(announcementObj.getString("id")))
+
+                    if(existingAnnouncements == 0L) {
+                        val announcement = Announcement(
+                                clearId = announcementObj.getString("id"),
+                                title = "Announcement",
+                                message = announcementObj.getString("body")
+                        )
+
+                        if(!announcementObj.isNull("link")) {
+                            val link = announcementObj.getJSONObject("link")
+                            announcement.linkText = link.getString("text")
+                            announcement.linkUri = link.getString("url")
+                        }
+
+                        announcement.save()
+                    }
+                }
+
+                val i = Intent("SYNC_FINISHED")
+                context.sendBroadcast(i)
+            }
         }
     }
 }

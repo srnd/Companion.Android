@@ -66,4 +66,8 @@ class AnnouncementCompanionCard(val context: Context, val announcement: Announce
             image.visibility = View.GONE
         }
     }
+
+    override fun getId(): String {
+        return announcement.clearId
+    }
 }

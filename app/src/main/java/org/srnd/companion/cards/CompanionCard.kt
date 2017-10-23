@@ -22,4 +22,5 @@ import android.view.View
 open abstract class CompanionCard {
     open val layout: Int? = null
     open fun populateView(view: View) { }
+    open fun getId(): String { return "" }
 }

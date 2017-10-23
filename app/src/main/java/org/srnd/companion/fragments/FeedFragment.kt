@@ -32,19 +32,26 @@ import org.srnd.companion.cards.CountdownCompanionCard
 import org.srnd.companion.cards.adapters.FeedAdapter
 import org.srnd.companion.models.Announcement
 import android.support.v4.widget.SwipeRefreshLayout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import org.joda.time.DateTime
+import org.joda.time.LocalDate
+import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
+import org.srnd.companion.sync.CompanionSyncAdapter
+import java.util.*
 
 
 class FeedFragment : Fragment() {
     private var recycler: RecyclerView? = null
     private var refresher: SwipeRefreshLayout? = null
+    private var adapter: FeedAdapter? = null
 
     val syncFinishReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            initData()
+            initData(true)
             refresher!!.isRefreshing = false
         }
     }
@@ -66,13 +73,13 @@ class FeedFragment : Fragment() {
             refresh()
         }
 
-        initData()
+        initData(false)
         return view
     }
 
     override fun onResume() {
         super.onResume()
-        context.registerReceiver(syncFinishReceiver, IntentFilter("SYNC_FINISHED"))
+        context.registerReceiver(syncFinishReceiver, CompanionSyncAdapter.SYNC_FINISHED)
     }
 
     override fun onPause() {
@@ -92,14 +99,8 @@ class FeedFragment : Fragment() {
         ContentResolver.requestSync(accounts[0], "org.srnd.companion.sync.provider", settingsBundle)
     }
 
-    fun initData() {
-        val shareAnnouncement: Announcement = Announcement(
-                title = getString(R.string.share_title),
-                message = getString(R.string.share_desc),
-                linkText = getString(R.string.share_title),
-                linkUri = "https://codeday.org/share",
-                imageResource = context.getDrawable(R.drawable.codeday_header)
-        )
+    fun initData(refresh: Boolean) {
+        val app = context.applicationContext as CompanionApplication
 
         val comingSoonAnnouncement: Announcement = Announcement(
                 title = getString(R.string.coming_soon_title),
@@ -112,16 +113,70 @@ class FeedFragment : Fragment() {
 
         val cards: MutableList<CompanionCard> = mutableListOf(
                 CompanionWelcomeCard(context),
-                CountdownCompanionCard(context),
-                AnnouncementCompanionCard(context, shareAnnouncement),
-                AnnouncementCompanionCard(context, comingSoonAnnouncement)
+                CountdownCompanionCard(context)
         )
+
+        val date = app.getCodeDayDate()
+
+        if(!app.getUserData().getBoolean("has_age") || !app.getUserData().getBoolean("has_parent")) {
+            cards.add(AnnouncementCompanionCard(context, Announcement(
+                    clearId = "info_reminder",
+                    title = getString(R.string.parent_info_title),
+                    message = getString(R.string.parent_info_desc),
+                    linkText = getString(R.string.parent_info_link),
+                    linkUri = "https://codeday.vip/${app.getUserData().getString("id")}"
+            )))
+        } else if(!app.getUserData().getBoolean("has_waiver")) {
+            cards.add(AnnouncementCompanionCard(context, Announcement(
+                    clearId = "waiver_reminder",
+                    title = getString(R.string.waiver_title),
+                    message = getString(R.string.waiver_desc),
+                    linkText = getString(R.string.waiver_link),
+                    linkUri = "https://codeday.vip/${app.getUserData().getString("id")}/waiver"
+            )))
+        }
+
+        if(date.isAfterNow) {
+            cards.add(AnnouncementCompanionCard(context, Announcement(
+                    clearId = "before_day_of",
+                    title = getString(R.string.before_day_of_title),
+                    message = getString(R.string.before_day_of_desc)
+            )))
+
+            cards.add(AnnouncementCompanionCard(context, Announcement(
+                    clearId = "skip_the_lines",
+                    title = getString(R.string.skip_the_lines_title),
+                    message = getString(R.string.skip_the_lines_desc)
+            )))
+
+            cards.add(AnnouncementCompanionCard(context, Announcement(
+                    clearId = "share",
+                    title = getString(R.string.share_title),
+                    message = getString(R.string.share_desc),
+                    linkText = getString(R.string.share_title),
+                    linkUri = "https://codeday.org/share",
+                    imageResource = context.getDrawable(R.drawable.codeday_header)
+            )))
+        }
+
+        if(DateTime.now().withTimeAtStartOfDay() == date.withTimeAtStartOfDay())
+            cards.add(AnnouncementCompanionCard(context, Announcement(
+                    clearId = "day_of",
+                    title = getString(R.string.day_of_title),
+                    message = getString(R.string.day_of_desc),
+                    imageResource = context.getDrawable(R.drawable.jump)
+            )))
 
         announcements.forEach { announcement ->
             cards.add(AnnouncementCompanionCard(context, announcement))
         }
 
-        val adapter = FeedAdapter(cards)
-        recycler!!.adapter = adapter
+        if(!refresh) {
+            adapter = FeedAdapter(cards)
+            recycler!!.adapter = adapter
+        } else {
+            adapter!!.cards = cards
+            adapter!!.notifyDataSetChanged()
+        }
     }
 }

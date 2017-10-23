@@ -34,9 +34,27 @@
     <!-- Static Cards -->
     <string name="share_title">Share CodeDay</string>
     <string name="share_desc">"We might be a little biased, but we think CodeDay is pretty fun. We designed it to be fun, in fact. But it's even more fun with friends, so tell a friend about CodeDay and help us help you help us all."</string>
+
     <string name="coming_soon_title">Coming Soon…</string>
     <string name="coming_soon_desc">Please note that this is the alpha version of Companion! Lots of things are still being added. That said, let us know in Slack if you find any bugs :)</string>
     <string name="go_to_slack">Go to Slack</string>
+
+    <string name="day_of_title">It\'s CodeDay!</string>
+    <string name="day_of_desc">It\'s here, it\'s here! CodeDay has finally arrived, and this app is finally made useful! We hope you\'re super excited :)</string>
+
+    <string name="before_day_of_title">Nothing interesting here yet…</string>
+    <string name="before_day_of_desc">At the moment, there\'s nothing much to see here. But during CodeDay, you\'ll see stuff like announcements from the organizers and reminders for upcoming activities. For now, though, we have a countdown to CodeDay so you can get hyped!</string>
+
+    <string name="skip_the_lines_title">Want to skip the check-in line?</string>
+    <string name="skip_the_lines_desc">With CodeDay Companion, you can totally skip the check-in line with self check-in. Simply open the app when you arrive, check yourself in, and show your phone to an organizer. Simple as that.</string>
+
+    <string name="parent_info_title">Reminder: More Info Needed</string>
+    <string name="parent_info_desc">Please fill out your age and parent info now so you don\'t need to at the door. Thanks!</string>
+    <string name="parent_info_link">Fill Out Info</string>
+
+    <string name="waiver_title">Reminder: One more step…</string>
+    <string name="waiver_desc">You (or your parent) will need to fill out the waiver before you can attend. Please do that now so you don\'t need to at the event, thanks!</string>
+    <string name="waiver_link">Fill Out Waiver</string>
 
     <!-- Loading -->
     <string name="loading_title">Just a sec…</string>

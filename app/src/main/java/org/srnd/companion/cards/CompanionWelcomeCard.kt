@@ -31,4 +31,8 @@ class CompanionWelcomeCard(val context: Context) : CompanionCard() {
         val welcomeTitle = view.findViewById<TextView>(R.id.welcome_text)
         welcomeTitle.text = context.getString(R.string.welcome_name, app.getUserData().getString("first_name"))
     }
+
+    override fun getId(): String {
+        return "welcome_card"
+    }
 }

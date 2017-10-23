@@ -21,6 +21,8 @@ import android.content.Context
 import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.TextView
+import org.joda.time.DateTime
+import org.joda.time.Days
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import java.util.*
@@ -31,13 +33,15 @@ class CountdownCompanionCard(val context: Context) : CompanionCard() {
     override fun populateView(view: View) {
         val app = context.applicationContext as CompanionApplication
 
-        val currentDate = Calendar.getInstance()
-
-        val date = Calendar.getInstance()
-        date.timeInMillis = app.getUserData().getJSONObject("event").getLong("starts_at") * 1000L
+        val currentDate = DateTime.now().withTimeAtStartOfDay()
+        val date = app.getCodeDayDate().withTimeAtStartOfDay()
 
         val card = view.findViewById<CardView>(R.id.card_view)
         val title = card.findViewById<TextView>(R.id.card_title)
-        title.text = context.getString(R.string.countdown, (date.get(Calendar.DAY_OF_YEAR) - currentDate.get(Calendar.DAY_OF_YEAR)).toString())
+        title.text = context.getString(R.string.countdown, Days.daysBetween(currentDate, date).days.toString())
+    }
+
+    override fun getId(): String {
+        return "countdown_card"
     }
 }

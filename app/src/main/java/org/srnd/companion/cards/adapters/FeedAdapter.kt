@@ -23,7 +23,15 @@ import android.view.ViewGroup
 import org.srnd.companion.cards.CompanionCard
 import org.srnd.companion.cards.holders.CompanionCardHolder
 
-class FeedAdapter(val cards: List<CompanionCard>) : RecyclerView.Adapter<CompanionCardHolder>() {
+class FeedAdapter(var cards: List<CompanionCard>) : RecyclerView.Adapter<CompanionCardHolder>() {
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return cards[position].getId().hashCode().toLong()
+    }
+
     override fun getItemCount(): Int {
         return cards.size
     }

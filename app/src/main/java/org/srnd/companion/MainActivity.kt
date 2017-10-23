@@ -71,20 +71,12 @@ class MainActivity : AppCompatActivity() {
         navigation!!.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         showFragment(FeedFragment())
-
-        val accountManager = AccountManager.get(this)
-        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
-
-        val settingsBundle = Bundle()
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true)
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
-        ContentResolver.requestSync(accounts[0], "org.srnd.companion.sync.provider", settingsBundle)
     }
 
     override fun onResume() {
         super.onResume()
+
+        (application as CompanionApplication).sync()
         if(!(application as CompanionApplication).isSignedIn()) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
