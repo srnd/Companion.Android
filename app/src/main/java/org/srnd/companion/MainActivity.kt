@@ -28,6 +28,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
 import org.srnd.companion.fragments.CheckInFragment
@@ -35,7 +36,6 @@ import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.fragments.ScheduleFragment
 
 class MainActivity : AppCompatActivity() {
-    // private var mTextMessage: TextView? = null
     private var navigation: BottomNavigationView? = null
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
