@@ -37,7 +37,7 @@ class ScheduleFragment : Fragment() {
         val app = context.applicationContext as CompanionApplication
         val view = inflater!!.inflate(R.layout.fragment_schedule, container, false)
 
-        recycler = view.findViewById<ListView>(R.id.recycler)
+        recycler = view.findViewById(R.id.recycler)
 
         val scheduleArray = mutableListOf<String>()
         val schedule = app.getUserData().getJSONObject("event").getJSONObject("schedule")

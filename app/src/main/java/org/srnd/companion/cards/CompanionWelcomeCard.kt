@@ -32,7 +32,5 @@ class CompanionWelcomeCard(val context: Context) : CompanionCard() {
         welcomeTitle.text = context.getString(R.string.welcome_name, app.getUserData().getString("first_name"))
     }
 
-    override fun getId(): String {
-        return "welcome_card"
-    }
+    override fun getId(): String = "welcome_card"
 }

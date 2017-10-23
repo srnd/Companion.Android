@@ -19,8 +19,8 @@ package org.srnd.companion.cards
 
 import android.view.View
 
-open abstract class CompanionCard {
+abstract class CompanionCard {
     open val layout: Int? = null
     open fun populateView(view: View) { }
-    open fun getId(): String { return "" }
+    open fun getId(): String = ""
 }

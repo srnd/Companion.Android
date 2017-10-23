@@ -41,7 +41,5 @@ class CountdownCompanionCard(val context: Context) : CompanionCard() {
         title.text = context.getString(R.string.countdown, Days.daysBetween(currentDate, date).days.toString())
     }
 
-    override fun getId(): String {
-        return "countdown_card"
-    }
+    override fun getId(): String = "countdown_card"
 }

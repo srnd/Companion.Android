@@ -56,7 +56,6 @@ class CompanionAuthenticator(context: Context?) : AbstractAccountAuthenticator(c
         return res
     }
 
-    override fun addAccount(response: AccountAuthenticatorResponse?, accountType: String?, authTokenType: String?, requiredFeatures: Array<out String>?, options: Bundle?): Bundle {
-        return Bundle()
-    }
+    override fun addAccount(response: AccountAuthenticatorResponse?, accountType: String?, authTokenType: String?, requiredFeatures: Array<out String>?, options: Bundle?): Bundle =
+            Bundle()
 }

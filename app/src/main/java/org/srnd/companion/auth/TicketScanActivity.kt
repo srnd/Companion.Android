@@ -40,11 +40,11 @@ import org.srnd.companion.util.AccountAdder
 
 
 class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
-    val CAMERA_PERMISSION = 1
+    private val CAMERA_PERMISSION = 1
     var scanner: ZXingScannerView? = null
     var dialog: ProgressDialog? = null
 
-    fun shouldShowCamera(): Boolean {
+    private fun shouldShowCamera(): Boolean {
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         if(permissionCheck == PackageManager.PERMISSION_GRANTED) return true
 

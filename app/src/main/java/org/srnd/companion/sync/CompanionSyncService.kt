@@ -30,7 +30,5 @@ class CompanionSyncService : Service() {
         if(syncAdapter == null) syncAdapter = CompanionSyncAdapter(applicationContext, true)
     }
 
-    override fun onBind(intent: Intent?): IBinder {
-        return syncAdapter!!.syncAdapterBinder
-    }
+    override fun onBind(intent: Intent?): IBinder = syncAdapter!!.syncAdapterBinder
 }

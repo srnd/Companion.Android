@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
         dialog = ProgressDialog(this)
     }
 
-    fun lookupTicket() {
+    private fun lookupTicket() {
         dialog!!.setTitle(getString(R.string.loading_title))
         dialog!!.setMessage(getString(R.string.loading_registration))
         dialog!!.show()

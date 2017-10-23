@@ -28,7 +28,7 @@ import android.widget.TextView
 import org.srnd.companion.R
 import org.srnd.companion.models.Announcement
 
-class AnnouncementCompanionCard(val context: Context, val announcement: Announcement) : CompanionCard() {
+class AnnouncementCompanionCard(val context: Context, private val announcement: Announcement) : CompanionCard() {
     override val layout: Int? = R.layout.card_announcement
 
     override fun populateView(view: View) {
@@ -67,7 +67,5 @@ class AnnouncementCompanionCard(val context: Context, val announcement: Announce
         }
     }
 
-    override fun getId(): String {
-        return announcement.clearId
-    }
+    override fun getId(): String = announcement.clearId
 }

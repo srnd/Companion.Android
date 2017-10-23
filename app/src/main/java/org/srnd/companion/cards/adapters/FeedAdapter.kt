@@ -28,22 +28,15 @@ class FeedAdapter(var cards: List<CompanionCard>) : RecyclerView.Adapter<Compani
         setHasStableIds(true)
     }
 
-    override fun getItemId(position: Int): Long {
-        return cards[position].getId().hashCode().toLong()
-    }
+    override fun getItemId(position: Int): Long = cards[position].getId().hashCode().toLong()
 
-    override fun getItemCount(): Int {
-        return cards.size
-    }
+    override fun getItemCount(): Int = cards.size
 
-    override fun getItemViewType(position: Int): Int {
-        return cards[position].layout!!
-    }
+    override fun getItemViewType(position: Int): Int = cards[position].layout!!
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CompanionCardHolder {
         val view = LayoutInflater.from(parent!!.context).inflate(viewType, parent, false)
-        val holder = CompanionCardHolder(view)
-        return holder
+        return CompanionCardHolder(view)
     }
 
     override fun onBindViewHolder(holder: CompanionCardHolder, position: Int) {

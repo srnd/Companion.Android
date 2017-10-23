@@ -17,26 +17,21 @@
 
 package org.srnd.companion
 
-import android.accounts.Account
-import android.accounts.AccountManager
-import android.content.ContentResolver
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
+import android.provider.Settings
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.MenuItem
-import android.widget.TextView
+import org.joda.time.DateTime
 import org.srnd.companion.fragments.CheckInFragment
 import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.fragments.ScheduleFragment
 
 class MainActivity : AppCompatActivity() {
     private var navigation: BottomNavigationView? = null
+    private var normalBrightness: Float = 0F
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         if(item.itemId == navigation!!.selectedItemId) return@OnNavigationItemSelectedListener false
@@ -49,13 +44,24 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_checkin -> fragment = CheckInFragment()
         }
 
+        val attrs = window.attributes
+
+        if(item.itemId == R.id.navigation_checkin) {
+            normalBrightness = attrs.screenBrightness
+            attrs.screenBrightness = 1F
+        } else if(navigation!!.selectedItemId == R.id.navigation_checkin) {
+            attrs.screenBrightness = normalBrightness
+        }
+
+        window.attributes = attrs
+
         if(fragment != null) {
             showFragment(fragment)
             return@OnNavigationItemSelectedListener true
         } else return@OnNavigationItemSelectedListener false
     }
 
-    fun showFragment(fragment: Fragment) {
+    private fun showFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.main_fragment, fragment)
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -67,8 +73,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         title = getString(R.string.app_name)
 
-        navigation = findViewById<BottomNavigationView>(R.id.navigationBar)
+        navigation = findViewById(R.id.navigationBar)
         navigation!!.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        val app = application as CompanionApplication
+
+        // allow check-in in these cases:
+        //  - app is in debug mode
+        //  - it's codeday
+        //  - the ticket type isn't student
+        if(BuildConfig.DEBUG
+                || DateTime.now().withTimeAtStartOfDay() == app.getCodeDayDate().withTimeAtStartOfDay()
+                || app.getUserData().getString("type") != "student")
+            navigation!!.menu.getItem(2).isEnabled = true
 
         showFragment(FeedFragment())
     }

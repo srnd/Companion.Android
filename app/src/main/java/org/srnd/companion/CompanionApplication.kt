@@ -45,7 +45,7 @@ import org.srnd.companion.sync.CompanionSyncAdapter
 class CompanionApplication : SugarApp() {
     private var cachedUserData: JSONObject? = null
 
-    val syncFinishReceiver = object : BroadcastReceiver() {
+    private val syncFinishReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             refreshUserData()
         }
@@ -89,9 +89,8 @@ class CompanionApplication : SugarApp() {
         ContentResolver.requestSync(accounts[0], "org.srnd.companion.sync.provider", settingsBundle)
     }
 
-    fun getCodeDayDate(): DateTime {
-        return DateTime(getUserData().getJSONObject("event").getLong("starts_at") * 1000L)
-    }
+    fun getCodeDayDate(): DateTime =
+            DateTime(getUserData().getJSONObject("event").getLong("starts_at") * 1000L)
 
     fun isSignedIn(): Boolean {
         val accountManager = AccountManager.get(this)

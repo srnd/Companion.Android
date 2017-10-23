@@ -23,9 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".dayof.CheckInActivity" />
         <activity android:name=".auth.TicketScanActivity" />
-        <activity android:name=".dayof.AllSetActivity" />
 
         <service android:name=".CompanionAuthenticatorService">
             <intent-filter>
