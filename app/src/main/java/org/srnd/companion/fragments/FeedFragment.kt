@@ -59,7 +59,7 @@ class FeedFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater!!.inflate(R.layout.fragment_feed, container, false)
 
-        recycler = view.findViewById(R.id.recycler)
+        recycler = view.findViewById<RecyclerView>(R.id.recycler)
 
         val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -105,11 +105,13 @@ class FeedFragment : Fragment() {
             val announcements = SugarRecord.listAll(Announcement::class.java)
 
             val cards: MutableList<CompanionCard> = mutableListOf(
-                    CompanionWelcomeCard(context),
-                    CountdownCompanionCard(context)
+                    CompanionWelcomeCard(context)
             )
 
             val date = app.getCodeDayDate()
+
+            if(!app.isItCodeDay())
+                cards.add(CountdownCompanionCard(context))
 
             if(!app.getUserData().getBoolean("has_age") || !app.getUserData().getBoolean("has_parent")) {
                 cards.add(AnnouncementCompanionCard(context, Announcement(
@@ -152,7 +154,7 @@ class FeedFragment : Fragment() {
                 )))
             }
 
-            if(DateTime.now().withTimeAtStartOfDay() == date.withTimeAtStartOfDay())
+            if(app.isItCodeDay())
                 cards.add(AnnouncementCompanionCard(context, Announcement(
                         clearId = "day_of",
                         title = getString(R.string.day_of_title),

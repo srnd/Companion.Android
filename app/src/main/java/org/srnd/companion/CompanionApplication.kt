@@ -92,10 +92,25 @@ class CompanionApplication : SugarApp() {
     fun getCodeDayDate(): DateTime =
             DateTime(getUserData().getJSONObject("event").getLong("starts_at") * 1000L)
 
+    fun isItCodeDay(): Boolean =
+            getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
+
     fun isSignedIn(): Boolean {
         val accountManager = AccountManager.get(this)
         val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
         return accounts.isNotEmpty()
+    }
+
+    fun setAccountData(key: String, value: String) {
+        val accountManager = AccountManager.get(this)
+        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+        accountManager.setUserData(accounts[0], key, value)
+    }
+
+    fun getAccountData(key: String): String? {
+        val accountManager = AccountManager.get(this)
+        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+        return accountManager.getUserData(accounts[0], key)
     }
 
     fun refreshUserData() {

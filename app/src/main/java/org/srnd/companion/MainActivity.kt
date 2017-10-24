@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         //  - it's codeday
         //  - the ticket type isn't student
         if(BuildConfig.DEBUG
-                || DateTime.now().withTimeAtStartOfDay() == app.getCodeDayDate().withTimeAtStartOfDay()
+                || app.isItCodeDay()
                 || app.getUserData().getString("type") != "student")
             navigation!!.menu.getItem(2).isEnabled = true
 
@@ -92,7 +92,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         (application as CompanionApplication).sync()
         if(!(application as CompanionApplication).isSignedIn()) {
             val intent = Intent(this, LoginActivity::class.java)

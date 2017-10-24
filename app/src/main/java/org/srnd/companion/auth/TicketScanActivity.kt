@@ -67,6 +67,7 @@ class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
         setContentView(scanner)
 
         dialog = ProgressDialog(this)
+        dialog!!.setCancelable(false)
     }
 
     override fun onResume() {

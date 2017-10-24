@@ -26,8 +26,12 @@
     <!-- Check-in -->
     <string name="admit_one">ADMIT ONE</string>
     <string name="checkin_title">Check-in Reminder</string>
+    <string name="self_check_in">Self Check-In</string>
     <string name="checkin_body">Want to skip the check-in line? Tap here to check in right now.</string>
     <string name="your_ticket">%1s\'s Ticket</string>
+    <string name="check_in_loading">Checking you in…</string>
+    <string name="check_in_error">Couldn\'t check you in: %1s</string>
+    <string name="show_screen">Show this screen at the door.\n(You can skip to the front of the line.)</string>
 
     <!-- Feed -->
     <string name="welcome_name">Hey there, %1s!</string>

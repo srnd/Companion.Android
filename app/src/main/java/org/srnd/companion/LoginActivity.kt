@@ -9,7 +9,9 @@ import android.widget.EditText
 import android.widget.Toast
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.extension.responseJson
+import com.orm.SugarRecord
 import org.srnd.companion.auth.TicketScanActivity
+import org.srnd.companion.models.Announcement
 import org.srnd.companion.util.AccountAdder
 
 class LoginActivity : AppCompatActivity() {
@@ -42,6 +44,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         dialog = ProgressDialog(this)
+        dialog!!.setCancelable(false)
     }
 
     private fun lookupTicket() {
@@ -57,6 +60,8 @@ class LoginActivity : AppCompatActivity() {
             if(res.getBoolean("ok")) {
                 val reg = res.getJSONObject("registration")
                 AccountAdder.addAccount(this, reg)
+                (application as CompanionApplication).refreshUserData()
+                SugarRecord.deleteAll(Announcement::class.java)
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)

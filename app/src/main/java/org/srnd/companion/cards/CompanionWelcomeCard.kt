@@ -18,6 +18,7 @@
 package org.srnd.companion.cards
 
 import android.content.Context
+import android.graphics.Typeface
 import android.view.View
 import android.widget.TextView
 import org.srnd.companion.CompanionApplication
@@ -30,6 +31,9 @@ class CompanionWelcomeCard(val context: Context) : CompanionCard() {
         val app = context.applicationContext as CompanionApplication
         val welcomeTitle = view.findViewById<TextView>(R.id.welcome_text)
         welcomeTitle.text = context.getString(R.string.welcome_name, app.getUserData().getString("first_name"))
+
+        val avenirNext = Typeface.createFromAsset(context.assets, "fonts/AvenirNextDemiBold.ttf")
+        welcomeTitle.typeface = avenirNext
     }
 
     override fun getId(): String = "welcome_card"
