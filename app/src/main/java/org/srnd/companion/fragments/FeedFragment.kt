@@ -69,7 +69,7 @@ class FeedFragment : Fragment() {
         refresher = view.findViewById(R.id.refresher)
         refresher!!.setColorSchemeResources(R.color.colorPrimary, R.color.colorGreen, R.color.colorBlue)
         refresher!!.setOnRefreshListener {
-            refresh()
+            (context.applicationContext as CompanionApplication).sync()
         }
 
         initData()
@@ -84,18 +84,6 @@ class FeedFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         context.unregisterReceiver(syncFinishReceiver)
-    }
-
-    private fun refresh() {
-        val accountManager = AccountManager.get(context)
-        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
-
-        val settingsBundle = Bundle()
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true)
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
-        ContentResolver.requestSync(accounts[0], "org.srnd.companion.sync.provider", settingsBundle)
     }
 
     fun initData() {

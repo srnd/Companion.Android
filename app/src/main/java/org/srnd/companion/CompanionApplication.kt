@@ -29,6 +29,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import com.facebook.stetho.Stetho
 import com.github.kittinunf.fuel.android.core.Json
 import com.github.kittinunf.fuel.core.FuelManager
@@ -78,15 +80,21 @@ class CompanionApplication : SugarApp() {
     }
 
     fun sync() {
-        val accountManager = AccountManager.get(this)
-        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+        try {
+            val accountManager = AccountManager.get(this)
+            val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
 
-        val settingsBundle = Bundle()
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true)
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
-        ContentResolver.requestSync(accounts[0], "org.srnd.companion.sync.provider", settingsBundle)
+            val settingsBundle = Bundle()
+            settingsBundle.putBoolean(
+                    ContentResolver.SYNC_EXTRAS_MANUAL, true)
+            settingsBundle.putBoolean(
+                    ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
+            ContentResolver.requestSync(accounts[0], "org.srnd.companion.sync.provider", settingsBundle)
+        } catch(e: Exception) {
+            Log.e("CompanionSync", "Error during sync: ${e.stackTrace}")
+            val i = Intent("SYNC_FINISHED")
+            sendBroadcast(i)
+        }
     }
 
     fun getCodeDayDate(): DateTime =
