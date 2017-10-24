@@ -93,9 +93,11 @@
             android:configChanges="orientation"
             android:label="@string/app_name_short"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".dayof.SelfCheckInActivity"
-            android:theme="@style/AppTheme.CheckIn" />
+            android:theme="@style/AppTheme.CheckIn"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
