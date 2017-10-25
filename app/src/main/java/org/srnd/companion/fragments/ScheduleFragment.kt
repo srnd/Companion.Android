@@ -27,6 +27,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.SimpleCursorAdapter
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import org.srnd.companion.fragments.schedule.ScheduleDayAdapter
@@ -47,19 +49,11 @@ class ScheduleFragment : Fragment() {
         recycler!!.layoutManager = layoutManager
         recycler!!.setHasFixedSize(true)
 
-        val scheduleArray = mutableListOf<String>()
-        val schedule = app.getUserData().getJSONObject("event").getJSONObject("schedule")
-
-//        schedule.keys().forEach { key ->
-//            val activities = schedule.getJSONArray(key)
-//
-//            (0 until activities.length())
-//                    .map { activities.getJSONObject(it) }
-//                    .mapTo(scheduleArray) { "${it.getString("hour")}: ${it.getString("title")}" }
-//        }
-
-//        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, android.R.id.text1, scheduleArray)
-        recycler!!.adapter = ScheduleDayAdapter(context, schedule)
+        doAsync {
+            val schedule = app.getUserData().getJSONObject("event").getJSONObject("schedule")
+            val adapter = ScheduleDayAdapter(context, schedule)
+            recycler!!.adapter = adapter
+        }
 
         return view
     }

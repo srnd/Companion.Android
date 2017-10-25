@@ -45,7 +45,7 @@ class ScheduleDayAdapter(val context: Context, private val days: JSONObject) : R
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         layoutManager.isAutoMeasureEnabled = true
         recycler!!.layoutManager = layoutManager
-//        recycler.setHasFixedSize(false)
+        recycler.setHasFixedSize(true)
         recycler.adapter = ScheduleActivityAdapter(context, day)
     }
 
