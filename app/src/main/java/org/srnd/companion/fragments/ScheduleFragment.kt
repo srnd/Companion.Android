@@ -19,6 +19,7 @@ package org.srnd.companion.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -28,9 +29,10 @@ import android.widget.ListView
 import android.widget.SimpleCursorAdapter
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
+import org.srnd.companion.fragments.schedule.ScheduleDayAdapter
 
 class ScheduleFragment : Fragment() {
-    private var recycler: ListView? = null
+    private var recycler: RecyclerView? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -39,19 +41,25 @@ class ScheduleFragment : Fragment() {
 
         recycler = view.findViewById(R.id.recycler)
 
+        val layoutManager = LinearLayoutManager(context)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        layoutManager.isAutoMeasureEnabled = true
+        recycler!!.layoutManager = layoutManager
+        recycler!!.setHasFixedSize(true)
+
         val scheduleArray = mutableListOf<String>()
         val schedule = app.getUserData().getJSONObject("event").getJSONObject("schedule")
 
-        schedule.keys().forEach { key ->
-            val activities = schedule.getJSONArray(key)
+//        schedule.keys().forEach { key ->
+//            val activities = schedule.getJSONArray(key)
+//
+//            (0 until activities.length())
+//                    .map { activities.getJSONObject(it) }
+//                    .mapTo(scheduleArray) { "${it.getString("hour")}: ${it.getString("title")}" }
+//        }
 
-            (0 until activities.length())
-                    .map { activities.getJSONObject(it) }
-                    .mapTo(scheduleArray) { "${it.getString("hour")}: ${it.getString("title")}" }
-        }
-
-        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, android.R.id.text1, scheduleArray)
-        recycler!!.adapter = adapter
+//        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, android.R.id.text1, scheduleArray)
+        recycler!!.adapter = ScheduleDayAdapter(context, schedule)
 
         return view
     }
