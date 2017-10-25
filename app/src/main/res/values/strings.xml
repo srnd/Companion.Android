@@ -10,11 +10,12 @@
 
     <!-- Authentication -->
     <string name="welcome">Welcome to Companion!</string>
-    <string name="welcome_subtitle">To get started, tap the button below to scan your CodeDay ticket.</string>
+    <string name="welcome_subtitle">Sign in with the email you registered for CodeDay with.</string>
+    <string name="or">or</string>
     <string name="scan_ticket">Scan Ticket</string>
     <string name="look_up_email">…or look up your ticket via email</string>
-    <string name="email_example">john@srnd.org</string>
-    <string name="find_ticket">Find Ticket</string>
+    <string name="email_example">you@gmail.com</string>
+    <string name="find_ticket">Log In</string>
     <string name="loading_registration">We\'re fetching your ticket info!</string>
     <string name="error_scan">Sorry, we couldn\'t find that ticket.</string>
 

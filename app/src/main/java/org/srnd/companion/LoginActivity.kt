@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -36,6 +37,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
         emailInput = findViewById<EditText>(R.id.email_input)
+        emailInput!!.setOnEditorActionListener { _, actionId, _ ->
+            if(actionId == EditorInfo.IME_ACTION_DONE) lookupTicket()
+            false
+        }
         emailInput!!.clearFocus()
 
         val lookupBtn = findViewById<Button>(R.id.lookup_button)

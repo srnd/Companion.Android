@@ -8,8 +8,8 @@ android {
         applicationId "org.srnd.companion"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 16
-        versionName "0.4.1a"
+        versionCode 18
+        versionName "0.4.3a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
