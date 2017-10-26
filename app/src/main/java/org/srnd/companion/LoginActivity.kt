@@ -74,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
                 AccountAdder.addAccount(this, reg)
 
                 (application as CompanionApplication).refreshUserData()
-                (application as CompanionApplication).setAlarmIfNeeded()
+//                (application as CompanionApplication).setAlarmIfNeeded()
                 SugarRecord.deleteAll(Announcement::class.java)
 
                 val intent = Intent(this, MainActivity::class.java)

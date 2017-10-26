@@ -71,7 +71,7 @@ class CompanionApplication : SugarApp() {
             notifManager.createNotificationChannel(eventNotifsChannel)
         }
 
-        setAlarmIfNeeded()
+//        setAlarmIfNeeded()
 
         registerReceiver(syncFinishReceiver, CompanionSyncAdapter.USER_SYNC_FINISHED)
     }

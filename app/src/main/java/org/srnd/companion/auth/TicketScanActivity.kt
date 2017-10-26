@@ -97,7 +97,7 @@ class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
                 AccountAdder.addAccount(this, registration)
 
                 (application as CompanionApplication).refreshUserData()
-                (application as CompanionApplication).setAlarmIfNeeded()
+//                (application as CompanionApplication).setAlarmIfNeeded()
                 SugarRecord.deleteAll(Announcement::class.java)
 
                 dialog!!.hide()
