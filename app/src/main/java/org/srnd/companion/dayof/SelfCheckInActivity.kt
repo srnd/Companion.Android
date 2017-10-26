@@ -27,6 +27,8 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import org.srnd.companion.BuildConfig
 import org.srnd.companion.CompanionApplication
 
@@ -57,7 +59,13 @@ class SelfCheckInActivity : AppCompatActivity() {
         animatorSet.addListener(object: AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
-                animatorSet.start()
+                doAsync {
+                    // oh my god this is the hackiest thing I have
+                    // ever done in my life
+                    uiThread {
+                        animatorSet.start()
+                    }
+                }
             }
         })
 

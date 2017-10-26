@@ -23,13 +23,13 @@
         android:propertyName="backgroundColor"
         android:duration="1000"
         android:valueFrom="@color/colorPrimary"
-        android:valueTo="@color/colorGreen"/>
+        android:valueTo="@color/colorGreen" />
 
     <objectAnimator
         android:propertyName="backgroundColor"
         android:duration="1000"
         android:valueFrom="@color/colorGreen"
-        android:valueTo="@color/colorBlue"/>
+        android:valueTo="@color/colorBlue" />
 
     <objectAnimator
         android:propertyName="backgroundColor"
