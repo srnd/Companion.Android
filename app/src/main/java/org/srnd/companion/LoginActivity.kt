@@ -1,9 +1,12 @@
 package org.srnd.companion
 
+import android.app.AlarmManager
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -26,6 +29,10 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
+        } else {
+            Log.d(Constants.ALARM_TAG, "Unsetting any previous alarms for checkin notif")
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.cancel((application as CompanionApplication).getCheckInAlarmPendingIntent())
         }
 
         setContentView(R.layout.activity_login)
@@ -65,7 +72,9 @@ class LoginActivity : AppCompatActivity() {
             if(res.getBoolean("ok")) {
                 val reg = res.getJSONObject("registration")
                 AccountAdder.addAccount(this, reg)
+
                 (application as CompanionApplication).refreshUserData()
+                (application as CompanionApplication).setAlarmIfNeeded()
                 SugarRecord.deleteAll(Announcement::class.java)
 
                 val intent = Intent(this, MainActivity::class.java)

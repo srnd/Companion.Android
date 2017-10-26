@@ -17,14 +17,21 @@
 
 package org.srnd.companion
 
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.Settings
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import org.joda.time.DateTime
+import org.srnd.companion.dayof.CompanionAlarmReceiver
 import org.srnd.companion.fragments.CheckInFragment
 import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.fragments.ScheduleFragment
@@ -73,6 +80,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         title = getString(R.string.app_name)
 
+        Log.d("Clock", SystemClock.elapsedRealtime().toString())
+
         navigation = findViewById(R.id.navigationBar)
         navigation!!.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
@@ -87,7 +96,20 @@ class MainActivity : AppCompatActivity() {
                 || app.getUserData().getString("type") != "student")
             navigation!!.menu.getItem(2).isEnabled = true
 
-        showFragment(FeedFragment())
+
+        if(intent!!.getStringExtra("action") == "selfCheckIn") {
+            Log.d("MainActivity", "ahhhhh")
+
+            val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notifManager.cancel(intent.getIntExtra("notifId", 0))
+
+            navigation!!.selectedItemId = R.id.navigation_checkin
+
+            val fragment = CheckInFragment(showSelfCheckIn = true)
+            showFragment(fragment)
+        } else {
+            showFragment(FeedFragment())
+        }
     }
 
     override fun onResume() {

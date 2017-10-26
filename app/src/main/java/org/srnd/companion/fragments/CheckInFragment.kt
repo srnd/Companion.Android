@@ -40,62 +40,37 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.json.JSONObject
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import org.srnd.companion.dayof.SelfCheckInActivity
 
-class CheckInFragment : Fragment() {
+class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment() {
+    private var user: JSONObject? = null
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater!!.inflate(R.layout.fragment_check_in, container, false)
 
-        val app = context.applicationContext as CompanionApplication
-
-        val user = (context.applicationContext as CompanionApplication).getUserData()
+        user = (context.applicationContext as CompanionApplication).getUserData()
 
         val title = view.findViewById<TextView>(R.id.ticket_title)
-        title.text = getString(R.string.your_ticket, user.getString("first_name"))
+        title.text = getString(R.string.your_ticket, user!!.getString("first_name"))
 
         val avenirNext = Typeface.createFromAsset(context.assets, "fonts/AvenirNextDemiBold.ttf")
         title.typeface = avenirNext
 
         val ticketType = view.findViewById<TextView>(R.id.ticket_type)
-        ticketType.text = "${user.getString("type").substring(0, 1).toUpperCase()}${user.getString("type").substring(1)}"
+        ticketType.text = "${user!!.getString("type").substring(0, 1).toUpperCase()}${user!!.getString("type").substring(1)}"
 
         val eventName = view.findViewById<TextView>(R.id.event_name)
-        eventName.text = user.getJSONObject("event").getString("name").replace("CodeDay ", "")
+        eventName.text = user!!.getJSONObject("event").getString("name").replace("CodeDay ", "")
 
         val fadeInAnim = AnimationUtils.loadAnimation(context, android.R.anim.fade_in)
 
-        val dialog = ProgressDialog(context)
-        dialog.setTitle(R.string.loading_title)
-        dialog.setCancelable(false)
-
         val selfCheckInButton = view.findViewById<Button>(R.id.self_check_in)
         selfCheckInButton.setOnClickListener {
-            if(app.getAccountData("check_in_code") == null) {
-                dialog.setMessage(context.getString(R.string.check_in_loading))
-                dialog.show()
-
-                Fuel.get("/checkin/${user.getString("id")}").responseJson { _, _, result ->
-                    val res = result.get().obj()
-
-                    Log.d("CheckIn", res.toString())
-
-                    if(res.getBoolean("ok") && res.has("code")) {
-                        app.setAccountData("check_in_code", res.getString("code"))
-                        val intent = Intent(context, SelfCheckInActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(context, context.getString(R.string.check_in_error, res.getString("error")), Toast.LENGTH_LONG).show()
-                    }
-
-                    dialog.hide()
-                }
-            } else {
-                val intent = Intent(context, SelfCheckInActivity::class.java)
-                startActivity(intent)
-            }
+            openSelfCheckIn()
         }
 
         val qrImage = view!!.findViewById<ImageView>(R.id.ticket_qr)
@@ -110,7 +85,7 @@ class CheckInFragment : Fragment() {
             )
 
             val size = 250
-            val matrix = qrWriter.encode(user.getString("id"), BarcodeFormat.QR_CODE, size, size, hints)
+            val matrix = qrWriter.encode(user!!.getString("id"), BarcodeFormat.QR_CODE, size, size, hints)
             val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565)
 
             for (x in 0 until size) {
@@ -126,6 +101,40 @@ class CheckInFragment : Fragment() {
             }
         }
 
+        if(showSelfCheckIn) openSelfCheckIn()
+
         return view
+    }
+
+    private fun openSelfCheckIn() {
+        val app = context.applicationContext as CompanionApplication
+
+        val dialog = ProgressDialog(context)
+        dialog.setTitle(R.string.loading_title)
+        dialog.setCancelable(false)
+
+        if(app.getAccountData("check_in_code") == null) {
+            dialog.setMessage(context.getString(R.string.check_in_loading))
+            dialog.show()
+
+            Fuel.get("/checkin/${user!!.getString("id")}").responseJson { _, _, result ->
+                val res = result.get().obj()
+
+                Log.d("CheckIn", res.toString())
+
+                if(res.getBoolean("ok") && res.has("code")) {
+                    app.setAccountData("check_in_code", res.getString("code"))
+                    val intent = Intent(context, SelfCheckInActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(context, context.getString(R.string.check_in_error, res.getString("error")), Toast.LENGTH_LONG).show()
+                }
+
+                dialog.hide()
+            }
+        } else {
+            val intent = Intent(context, SelfCheckInActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

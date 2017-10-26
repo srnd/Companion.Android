@@ -19,23 +19,27 @@ package org.srnd.companion.auth
 
 import android.Manifest
 import android.app.Activity
-import android.os.Bundle
-import com.google.zxing.Result
-import me.dm7.barcodescanner.zxing.ZXingScannerView
-import android.accounts.Account
-import android.accounts.AccountManager
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Bundle
+import android.os.SystemClock
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.extension.responseJson
+import com.google.zxing.Result
+import com.orm.SugarRecord
+import me.dm7.barcodescanner.zxing.ZXingScannerView
+import org.srnd.companion.CompanionApplication
 import org.srnd.companion.MainActivity
-import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.R
-import org.srnd.companion.fcm.FirebaseAssociator
+import org.srnd.companion.dayof.CompanionAlarmReceiver
+import org.srnd.companion.models.Announcement
 import org.srnd.companion.util.AccountAdder
 
 
@@ -91,7 +95,10 @@ class TicketScanActivity : Activity(), ZXingScannerView.ResultHandler {
 
             if(registration.getBoolean("ok")) {
                 AccountAdder.addAccount(this, registration)
-                // Geofencer.geofenceForAddress(this, registration.getJSONObject("event").getJSONObject("venue").getString("full_address"))
+
+                (application as CompanionApplication).refreshUserData()
+                (application as CompanionApplication).setAlarmIfNeeded()
+                SugarRecord.deleteAll(Announcement::class.java)
 
                 dialog!!.hide()
 

@@ -19,29 +19,24 @@ package org.srnd.companion
 
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.annotation.SuppressLint
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.NotificationCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.widget.Toast
 import com.facebook.stetho.Stetho
-import com.github.kittinunf.fuel.android.core.Json
 import com.github.kittinunf.fuel.core.FuelManager
 import com.orm.SugarApp
-import com.orm.SugarDb
-import com.orm.SugarRecord
 import net.danlew.android.joda.JodaTimeAndroid
-import org.joda.time.Chronology
 import org.joda.time.DateTime
 import org.json.JSONObject
-import org.srnd.companion.models.Announcement
+import org.srnd.companion.dayof.CompanionAlarmReceiver
 import org.srnd.companion.sync.CompanionSyncAdapter
 
 class CompanionApplication : SugarApp() {
@@ -71,12 +66,32 @@ class CompanionApplication : SugarApp() {
 
             eventNotifsChannel = NotificationChannel(eventNotifsChannelId, eventNotifsName, eventNotifsImportance)
             eventNotifsChannel.description = eventNotifsDesc
-            eventNotifsChannel.lightColor = Color.RED
-            eventNotifsChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            eventNotifsChannel.lightColor = ContextCompat.getColor(this, R.color.colorPrimary)
+            eventNotifsChannel.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
             notifManager.createNotificationChannel(eventNotifsChannel)
         }
 
+        setAlarmIfNeeded()
+
         registerReceiver(syncFinishReceiver, CompanionSyncAdapter.USER_SYNC_FINISHED)
+    }
+
+    @SuppressLint("NewApi")
+    fun setAlarmIfNeeded() {
+        if(isSignedIn() && getAccountData("check_in_alarm_set") == null) {
+            Log.d(Constants.ALARM_TAG, "Check-in alarm was not set, setting now")
+
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val time = (getUserData().getJSONObject("event").getLong("start_time")) - (2 * 60 * 60 * 1000)
+
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, getCheckInAlarmPendingIntent())
+                Build.VERSION.SDK_INT >= 19 -> alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, getCheckInAlarmPendingIntent())
+                else -> alarmManager.set(AlarmManager.RTC_WAKEUP, time, getCheckInAlarmPendingIntent())
+            }
+
+            setAccountData("check_in_alarm_set", "true")
+        }
     }
 
     fun sync() {
@@ -95,6 +110,12 @@ class CompanionApplication : SugarApp() {
             val i = Intent("SYNC_FINISHED")
             sendBroadcast(i)
         }
+    }
+
+    fun getCheckInAlarmPendingIntent(): PendingIntent {
+        val receiverIntent = Intent(this, CompanionAlarmReceiver::class.java)
+        receiverIntent.putExtra("alarmType", "checkInNotification")
+        return PendingIntent.getBroadcast(this, Constants.CHECK_IN_ALARM, receiverIntent, 0)
     }
 
     fun getCodeDayDate(): DateTime =
