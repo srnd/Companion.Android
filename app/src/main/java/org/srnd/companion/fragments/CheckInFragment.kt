@@ -17,13 +17,18 @@
 
 package org.srnd.companion.fragments
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
+import android.support.customtabs.CustomTabsIntent
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -106,8 +111,36 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
         return view
     }
 
+    private fun promptParentInfo() {
+        val app = context.applicationContext as CompanionApplication
+
+        val alertDialog = AlertDialog.Builder(context)
+                .setTitle("One more step!")
+                .setMessage("Before you check in, you will need to enter your parent's info and get them to sign the waiver.")
+                .setPositiveButton("Ok, take me to the form", { _: DialogInterface, _: Int ->
+                    val user = app.getUserData()
+                    val url = if(!user.getBoolean("has_parent")) {
+                        "https://codeday.vip/${user.getString("id")}/parent"
+                    } else {
+                        "https://codeday.vip/${user.getString("id")}/waiver"
+                    }
+
+                    val builder = CustomTabsIntent.Builder()
+                    builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    val customTabsIntent = builder.build()
+                    customTabsIntent.launchUrl(context, Uri.parse(url))
+                }).create()
+
+        alertDialog.show()
+    }
+
     private fun openSelfCheckIn() {
         val app = context.applicationContext as CompanionApplication
+
+        if(user!!.getString("type") == "student" && (!user!!.getBoolean("has_parent") || !user!!.getBoolean("has_waiver"))) {
+            promptParentInfo()
+            return
+        }
 
         val dialog = ProgressDialog(context)
         dialog.setTitle(R.string.loading_title)
@@ -127,7 +160,11 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
                     val intent = Intent(context, SelfCheckInActivity::class.java)
                     startActivity(intent)
                 } else {
-                    Toast.makeText(context, context.getString(R.string.check_in_error, res.getString("error")), Toast.LENGTH_LONG).show()
+                    if(res.getString("error") == "Please fill out your parent info and sign the waiver before checking in.") {
+                        promptParentInfo()
+                    } else {
+                        Toast.makeText(context, res.getString("error"), Toast.LENGTH_LONG).show()
+                    }
                 }
 
                 dialog.hide()

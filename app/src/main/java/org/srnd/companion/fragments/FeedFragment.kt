@@ -119,6 +119,10 @@ class FeedFragment : Fragment() {
                 )))
             }
 
+            announcements.forEach { announcement ->
+                cards.add(AnnouncementCompanionCard(context, announcement))
+            }
+
             if(date.isAfterNow) {
                 cards.add(AnnouncementCompanionCard(context, Announcement(
                         clearId = "before_day_of",
@@ -149,10 +153,6 @@ class FeedFragment : Fragment() {
                         message = getString(R.string.day_of_desc),
                         imageResource = context.getDrawable(R.drawable.jump)
                 )))
-
-            announcements.forEach { announcement ->
-                cards.add(AnnouncementCompanionCard(context, announcement))
-            }
 
             uiThread {
                 if(adapter == null) {

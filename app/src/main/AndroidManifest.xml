@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".CompanionApplication"
@@ -99,6 +100,13 @@
             android:name=".dayof.SelfCheckInActivity"
             android:theme="@style/AppTheme.CheckIn"
             android:screenOrientation="portrait"/>
+
+        <service android:name="main.java.com.mindscapehq.android.raygun4android.RaygunPostService"
+            android:exported="false"
+            android:process=":raygunpostservice"/>
+
+        <meta-data android:name="com.mindscapehq.android.raygun4android.apikey"
+            android:value="3eTZOOj3av+xKaAFiQ/SiA==" />
     </application>
 
 </manifest>

@@ -17,21 +17,16 @@
 
 package org.srnd.companion
 
-import android.app.AlarmManager
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
-import android.provider.Settings
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import org.joda.time.DateTime
-import org.srnd.companion.dayof.CompanionAlarmReceiver
 import org.srnd.companion.fragments.CheckInFragment
 import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.fragments.ScheduleFragment

@@ -33,6 +33,8 @@ import android.util.Log
 import com.facebook.stetho.Stetho
 import com.github.kittinunf.fuel.core.FuelManager
 import com.orm.SugarApp
+import main.java.com.mindscapehq.android.raygun4android.RaygunClient
+import main.java.com.mindscapehq.android.raygun4android.messages.RaygunUserInfo
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.DateTime
 import org.json.JSONObject
@@ -72,6 +74,20 @@ class CompanionApplication : SugarApp() {
         }
 
 //        setAlarmIfNeeded()
+
+        RaygunClient.init(this)
+        RaygunClient.attachExceptionHandler()
+
+        if(isSignedIn() && !BuildConfig.DEBUG) {
+            val user = getUserData()
+            val raygunUser = RaygunUserInfo()
+            raygunUser.identifier = user.getString("id")
+            raygunUser.firstName = user.getString("first_name")
+            raygunUser.fullName = user.getString("name")
+            raygunUser.setAnonymous(false)
+
+            RaygunClient.setUser(raygunUser)
+        }
 
         registerReceiver(syncFinishReceiver, CompanionSyncAdapter.USER_SYNC_FINISHED)
     }
@@ -121,8 +137,11 @@ class CompanionApplication : SugarApp() {
     fun getCodeDayDate(): DateTime =
             DateTime(getUserData().getJSONObject("event").getLong("starts_at") * 1000L)
 
+    fun getCodeDayEndDate(): DateTime =
+            DateTime(getUserData().getJSONObject("event").getLong("ends_at") * 1000L)
+
     fun isItCodeDay(): Boolean =
-            getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
+            getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay() || getCodeDayEndDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
 
     fun isSignedIn(): Boolean {
         val accountManager = AccountManager.get(this)
