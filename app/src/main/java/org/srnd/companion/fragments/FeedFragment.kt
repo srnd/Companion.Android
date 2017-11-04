@@ -96,7 +96,7 @@ class FeedFragment : Fragment() {
             val announcements = SugarRecord.listAll(Announcement::class.java)
 
             val cards: MutableList<CompanionCard> = mutableListOf(
-                    CompanionWelcomeCard(context)
+                    WelcomeCompanionCard(context)
             )
 
             val date = app.getCodeDayDate()
@@ -125,10 +125,10 @@ class FeedFragment : Fragment() {
             val nowPlaying = app.getNowPlaying()
 
             if(app.isItCodeDay() && nowPlaying != null && !nowPlaying.isNull("now_playing"))
-                cards.add(CompanionSpotifyCard(context))
+                cards.add(SpotifyCompanionCard(context))
 
             if(app.isItCodeDay())
-                cards.add(CompanionUberCard(context))
+                cards.add(UberCompanionCard(context))
 
             announcements.forEach { announcement ->
                 cards.add(AnnouncementCompanionCard(context, announcement))

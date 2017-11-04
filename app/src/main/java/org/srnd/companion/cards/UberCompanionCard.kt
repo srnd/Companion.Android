@@ -29,7 +29,7 @@ import org.jetbrains.anko.uiThread
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 
-class CompanionUberCard(private val context: Context) : CompanionCard() {
+class UberCompanionCard(private val context: Context) : CompanionCard() {
     override val layout: Int? = R.layout.card_uber
     override fun getId(): String = "uber_ride"
 

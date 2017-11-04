@@ -24,7 +24,7 @@ import android.widget.TextView
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 
-class CompanionWelcomeCard(val context: Context) : CompanionCard() {
+class WelcomeCompanionCard(val context: Context) : CompanionCard() {
     override val layout: Int? = R.layout.welcome_title
 
     override fun populateView(view: View) {

@@ -34,7 +34,7 @@ import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import java.net.URL
 
-class CompanionSpotifyCard(private val context: Context) : CompanionCard() {
+class SpotifyCompanionCard(private val context: Context) : CompanionCard() {
     override val layout: Int? = R.layout.card_spotify
     override fun getId(): String = "spotify_now_playing"
 

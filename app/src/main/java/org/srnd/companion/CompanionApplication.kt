@@ -87,7 +87,7 @@ class CompanionApplication : SugarApp() {
             eventNotifsChannel = NotificationChannel(eventNotifsChannelId, eventNotifsName, eventNotifsImportance)
             eventNotifsChannel.description = eventNotifsDesc
             eventNotifsChannel.lightColor = ContextCompat.getColor(this, R.color.colorPrimary)
-            eventNotifsChannel.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+            eventNotifsChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             notifManager.createNotificationChannel(eventNotifsChannel)
         }
 
