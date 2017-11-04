@@ -8,8 +8,8 @@ android {
         applicationId "org.srnd.companion"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 24
-        versionName "0.4.9a"
+        versionCode 25
+        versionName "0.4.10a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -41,6 +41,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.1'
     compile 'com.mindscapehq.android:raygun4android:3.0.0'
     compile 'com.android.support:customtabs:26.0.0'
+    compile 'com.uber.sdk:rides-android:0.6.1'
+    compile 'com.github.kittinunf.fuse:fuse:0.2'
     testCompile 'junit:junit:4.12'
 }
 

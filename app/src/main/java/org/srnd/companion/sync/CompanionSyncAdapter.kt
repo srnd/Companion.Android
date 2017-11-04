@@ -32,6 +32,7 @@ class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThread
     companion object {
         val SYNC_FINISHED = IntentFilter("SYNC_FINISHED")
         val USER_SYNC_FINISHED = IntentFilter("USER_SYNC_FINISHED")
+        val NOW_PLAYING_SYNC_FINISHED = IntentFilter("NOW_PLAYING_FINISHED")
     }
 
     override fun onPerformSync(account: Account?, extras: Bundle?, authority: String?, provider: ContentProviderClient?, syncResult: SyncResult?) {
@@ -46,6 +47,16 @@ class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThread
 
                 val i = Intent("USER_SYNC_FINISHED")
                 context.sendBroadcast(i)
+            }
+
+            if(app.isItCodeDay()) {
+                Fuel.get("/nowplaying/${app.getUserData().getJSONObject("event").getString("id")}").responseJson { _, _, result ->
+                    val nowPlaying = result.get().obj()
+                    accountManager.setUserData(account, "now_playing", nowPlaying.toString())
+
+                    val i = Intent("NOW_PLAYING_FINISHED")
+                    context.sendBroadcast(i)
+                }
             }
 
             Fuel.get("/announcements/${app.getUserData().getJSONObject("event").getString("id")}").responseJson { _, _, result ->

@@ -44,7 +44,7 @@
                     android:id="@+id/card_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/welcome"
+                    android:text="@string/uber_title"
                     android:textAppearance="@android:style/TextAppearance.Material.Large" />
 
                 <TextView
@@ -52,41 +52,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/card_title"
-                    android:text="@string/lorem_ipsum"
+                    android:text="@string/uber_desc"
                     android:layout_marginTop="5dp"
                     android:textAppearance="@android:style/TextAppearance.Material.Small" />
             </RelativeLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:id="@+id/card_image"
-                android:src="@drawable/codeday_header"
-                android:layout_below="@id/card_content"/>
 
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:background="@color/cardDividerColor"
                 android:id="@+id/card_divider"
-                android:layout_below="@id/card_image"/>
+                android:layout_below="@id/card_content"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/card_divider"
-                android:gravity="right"
-                android:id="@+id/card_actions">
+                android:layout_below="@id/card_divider">
 
-                <Button
-                    android:layout_width="wrap_content"
+                <com.uber.sdk.android.rides.RideRequestButton
+                    android:id="@+id/ride_button"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/card_content_padding"
-                    android:id="@+id/card_action_1"
-                    android:text="Action 1"
-                    android:textColor="@color/colorPrimaryDark"
-                    style="?android:attr/borderlessButtonStyle"/>
+                    app:ub__style="white"/>
             </RelativeLayout>
         </RelativeLayout>
 

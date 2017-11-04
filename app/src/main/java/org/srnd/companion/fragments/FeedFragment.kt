@@ -25,13 +25,10 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.orm.SugarRecord
-import org.srnd.companion.cards.AnnouncementCompanionCard
-import org.srnd.companion.cards.CompanionCard
-import org.srnd.companion.cards.CompanionWelcomeCard
-import org.srnd.companion.cards.CountdownCompanionCard
 import org.srnd.companion.cards.adapters.FeedAdapter
 import org.srnd.companion.models.Announcement
 import android.support.v4.widget.SwipeRefreshLayout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +37,7 @@ import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
+import org.srnd.companion.cards.*
 import org.srnd.companion.sync.CompanionSyncAdapter
 
 
@@ -78,7 +76,8 @@ class FeedFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        context.registerReceiver(syncFinishReceiver, CompanionSyncAdapter.SYNC_FINISHED)
+//        context.registerReceiver(syncFinishReceiver, CompanionSyncAdapter.SYNC_FINISHED)
+        context.registerReceiver(syncFinishReceiver, CompanionSyncAdapter.NOW_PLAYING_SYNC_FINISHED)
     }
 
     override fun onPause() {
@@ -87,6 +86,7 @@ class FeedFragment : Fragment() {
     }
 
     fun initData() {
+        Log.d("init", "calling initdata")
         doAsync {
             val app = context.applicationContext as CompanionApplication
 
@@ -119,11 +119,16 @@ class FeedFragment : Fragment() {
                 )))
             }
 
+            val nowPlaying = app.getNowPlaying()
+
+            if(app.isItCodeDay() && nowPlaying != null && !nowPlaying.isNull("now_playing"))
+                cards.add(CompanionSpotifyCard(context))
+
             announcements.forEach { announcement ->
                 cards.add(AnnouncementCompanionCard(context, announcement))
             }
 
-            if(date.isAfterNow) {
+            if(!app.isItCodeDay()) {
                 cards.add(AnnouncementCompanionCard(context, Announcement(
                         clearId = "before_day_of",
                         title = getString(R.string.before_day_of_title),
@@ -146,13 +151,16 @@ class FeedFragment : Fragment() {
                 )))
             }
 
-            if(app.isItCodeDay())
+            if(app.isItCodeDay()) {
+                cards.add(CompanionUberCard(context))
+
                 cards.add(AnnouncementCompanionCard(context, Announcement(
                         clearId = "day_of",
                         title = getString(R.string.day_of_title),
                         message = getString(R.string.day_of_desc),
                         imageResource = context.getDrawable(R.drawable.jump)
                 )))
+            }
 
             uiThread {
                 if(adapter == null) {

@@ -63,6 +63,12 @@
     <string name="waiver_desc">You (or your parent) will need to fill out the waiver before you can attend. Please do that now so you don\'t need to at the event, thanks!</string>
     <string name="waiver_link">Fill Out Waiver</string>
 
+    <!-- Dynamic Cards -->
+    <string name="uber_title">Need a ride?</string>
+    <string name="uber_desc">Grab a ride to CodeDay with Uber. Tap the button below to open the Uber app and request a ride to the venue.</string>
+    <string name="spotify_title">Now Playing</string>
+    <string name="spotify_action">View on Spotify</string>
+
     <!-- Loading -->
     <string name="loading_title">Just a sec…</string>
 

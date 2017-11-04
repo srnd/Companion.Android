@@ -27,12 +27,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.facebook.stetho.Stetho
 import com.github.kittinunf.fuel.core.FuelManager
+import com.github.kittinunf.fuse.core.Fuse
 import com.orm.SugarApp
+import com.uber.sdk.android.core.UberSdk
+import com.uber.sdk.core.auth.Scope
+import com.uber.sdk.rides.client.Session
+import com.uber.sdk.rides.client.SessionConfiguration
 import main.java.com.mindscapehq.android.raygun4android.RaygunClient
 import main.java.com.mindscapehq.android.raygun4android.messages.RaygunUserInfo
 import net.danlew.android.joda.JodaTimeAndroid
@@ -52,7 +58,19 @@ class CompanionApplication : SugarApp() {
 
     override fun onCreate() {
         super.onCreate()
+        // set up uber api
+        val uberConfig = SessionConfiguration.Builder()
+                .setClientId(getString(R.string.uber_client_id))
+                .setServerToken(getString(R.string.uber_server_token))
+                .setRedirectUri(getString(R.string.uber_redirect_uri))
+                .setScopes(listOf(Scope.RIDE_WIDGETS))
+                .setEnvironment(if (BuildConfig.DEBUG) SessionConfiguration.Environment.SANDBOX else SessionConfiguration.Environment.PRODUCTION)
+                .build()
+
+        UberSdk.initialize(uberConfig)
+
         JodaTimeAndroid.init(this)
+        Fuse.init(cacheDir.absolutePath)
 
         if(BuildConfig.DEBUG) Stetho.initializeWithDefaults(this)
         FuelManager.instance.basePath = "https://app.codeday.vip/api"
@@ -75,8 +93,10 @@ class CompanionApplication : SugarApp() {
 
 //        setAlarmIfNeeded()
 
-        RaygunClient.init(this)
-        RaygunClient.attachExceptionHandler()
+        if(!BuildConfig.DEBUG) {
+            RaygunClient.init(this)
+            RaygunClient.attachExceptionHandler()
+        }
 
         if(isSignedIn() && !BuildConfig.DEBUG) {
             val user = getUserData()
@@ -141,7 +161,7 @@ class CompanionApplication : SugarApp() {
             DateTime(getUserData().getJSONObject("event").getLong("ends_at") * 1000L)
 
     fun isItCodeDay(): Boolean =
-            getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay() || getCodeDayEndDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
+            if (BuildConfig.DEBUG) true else getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay() || getCodeDayEndDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
 
     fun isSignedIn(): Boolean {
         val accountManager = AccountManager.get(this)
@@ -170,5 +190,17 @@ class CompanionApplication : SugarApp() {
     fun getUserData(): JSONObject {
         if(cachedUserData == null) refreshUserData()
         return cachedUserData!!
+    }
+
+    fun getNowPlaying(): JSONObject? {
+        val accountManager = AccountManager.get(this)
+        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+        val nowPlaying = accountManager.getUserData(accounts[0], "now_playing")
+
+        return if(nowPlaying == null) {
+            null
+        } else {
+            JSONObject(nowPlaying)
+        }
     }
 }

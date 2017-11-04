@@ -18,8 +18,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
@@ -44,33 +43,59 @@
                     android:id="@+id/card_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/welcome"
-                    android:textAppearance="@android:style/TextAppearance.Material.Large" />
-
-                <TextView
-                    android:id="@+id/card_message"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/card_title"
-                    android:text="@string/lorem_ipsum"
-                    android:layout_marginTop="5dp"
-                    android:textAppearance="@android:style/TextAppearance.Material.Small" />
+                    android:text="@string/spotify_title"
+                    android:textAppearance="@android:style/TextAppearance.Material.Large"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
-            <ImageView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:id="@+id/card_image"
-                android:src="@drawable/codeday_header"
-                android:layout_below="@id/card_content"/>
+                android:layout_below="@id/card_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="@dimen/card_content_padding"
+                android:layout_marginBottom="@dimen/card_content_padding"
+                android:layout_marginRight="@dimen/card_content_padding"
+                android:id="@+id/card_song">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:id="@+id/album_art"
+                    android:src="@drawable/album_art_placeholder"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/card_content_padding">
+
+                    <TextView
+                        android:id="@+id/track_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="Song Title"
+                        android:textAppearance="@android:style/TextAppearance.Material.Large"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:id="@+id/artist_title"
+                        android:text="Artist Name"
+                        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+                </LinearLayout>
+            </LinearLayout>
 
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:background="@color/cardDividerColor"
                 android:id="@+id/card_divider"
-                android:layout_below="@id/card_image"/>
+                android:layout_below="@id/card_song"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -83,8 +108,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/card_content_padding"
-                    android:id="@+id/card_action_1"
-                    android:text="Action 1"
+                    android:id="@+id/spotify_action"
+                    android:text="@string/spotify_action"
                     android:textColor="@color/colorPrimaryDark"
                     style="?android:attr/borderlessButtonStyle"/>
             </RelativeLayout>

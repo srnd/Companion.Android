@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<!--
   ~     Copyright (C) 2017 srnd.org
   ~
   ~     This program is free software: you can redistribute it and/or modify
@@ -14,13 +14,13 @@
   ~     You should have received a copy of the GNU General Public License
   ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
-<resources>
-    <dimen name="card_margin">10dp</dimen>
-    <dimen name="card_margin_top">2dp</dimen>
-    <dimen name="card_margin_bottom">4dp</dimen>
-    <dimen name="card_content_padding">15dp</dimen>
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+<resources>
+    <!-- Uber -->
+    <string name="uber_client_id">9DNOF3Ir6qHdvQl8C2pYzW5NUh7z-_C6</string>
+    <string name="uber_server_token">tHBKLLSHvpb-riURawSqDOAbp31dmnvU5yIuyhsn</string>
+    <string name="uber_redirect_uri">https://app.codeday.vip/oauth/uber</string>
+
+    <!-- Maps -->
+    <string name="maps_key">AIzaSyDqgVJM4GiNVrmg2-qWE16MojRE0kgwOh0</string>
 </resources>
