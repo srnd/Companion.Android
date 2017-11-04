@@ -21,11 +21,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import com.daimajia.androidanimations.library.Techniques
+import com.daimajia.androidanimations.library.YoYo
 import com.github.kittinunf.fuse.core.Cache
 import com.github.kittinunf.fuse.core.Fuse
 import com.github.kittinunf.fuse.core.fetch.get
@@ -43,10 +46,13 @@ class SpotifyCompanionCard(private val context: Context) : CompanionCard() {
         val nowPlaying = app.getNowPlaying()!!.getJSONObject("now_playing")
 
         val trackTitle = view.findViewById<TextView>(R.id.track_title)
-        trackTitle.text = nowPlaying.getString("track")
-
         val artistTitle = view.findViewById<TextView>(R.id.artist_title)
-        artistTitle.text = nowPlaying.getString("artist")
+
+        val oldTitle = trackTitle.text
+        val oldArtist = artistTitle.text
+//
+//        Log.d("SpotifyCard", "new track title ${nowPlaying.getString("track")}")
+//        Log.d("SpotifyCard", "new artist title ${nowPlaying.getString("artist")}")
 
         val action = view.findViewById<Button>(R.id.spotify_action)
         action.setOnClickListener {
@@ -58,10 +64,38 @@ class SpotifyCompanionCard(private val context: Context) : CompanionCard() {
         val albumArt = view.findViewById<ImageView>(R.id.album_art)
 //        albumArt.visibility = View.INVISIBLE
 
-        Fuse.bytesCache.get(URL(nowPlaying.getJSONObject("album").getString("image"))) { result, type ->
+        Fuse.bytesCache.get(URL(nowPlaying.getJSONObject("album").getString("image"))) { result, _ ->
             result.success { bytes ->
                 val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 albumArt.setImageBitmap(bitmap)
+
+                if(oldTitle != nowPlaying.getString("track") && oldTitle != "Song Title") {
+                    YoYo.with(Techniques.FadeOutRight)
+                            .duration(100)
+                            .onEnd {
+                                trackTitle.text = nowPlaying.getString("track")
+                                YoYo.with(Techniques.FadeInLeft)
+                                        .duration(100)
+                                        .playOn(trackTitle)
+                            }
+                            .playOn(trackTitle)
+                } else {
+                    trackTitle.text = nowPlaying.getString("track")
+                }
+
+                if(oldArtist != nowPlaying.getString("artist") && oldArtist != "Artist Name") {
+                    YoYo.with(Techniques.FadeOutRight)
+                            .duration(100)
+                            .onEnd {
+                                artistTitle.text = nowPlaying.getString("artist")
+                                YoYo.with(Techniques.FadeInLeft)
+                                        .duration(100)
+                                        .playOn(artistTitle)
+                            }
+                            .playOn(artistTitle)
+                } else {
+                    artistTitle.text = nowPlaying.getString("artist")
+                }
 
 //                val fadeInAnim = AnimationUtils.loadAnimation(context, android.R.anim.fade_in)
 //                if(type == Cache.Type.NOT_FOUND) albumArt.startAnimation(fadeInAnim)

@@ -8,8 +8,8 @@ android {
         applicationId "org.srnd.companion"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 27
-        versionName "0.4.12a"
+        versionCode 28
+        versionName "0.4.13a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,6 +32,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:26.0.0'
     compile 'com.android.support:design:26.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:support-compat:26.0.0'
     compile 'me.dm7.barcodescanner:zxing:1.9.8'
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.github.kittinunf.fuel:fuel-android:1.11.0'
@@ -43,6 +44,8 @@ dependencies {
     compile 'com.android.support:customtabs:26.0.0'
     compile 'com.uber.sdk:rides-android:0.6.1'
     compile 'com.github.kittinunf.fuse:fuse:0.2'
+    compile 'com.daimajia.easing:library:2.0@aar'
+    compile 'com.daimajia.androidanimations:library:2.3@aar'
     testCompile 'junit:junit:4.12'
 }
 
