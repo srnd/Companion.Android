@@ -21,10 +21,7 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.annotation.SuppressLint
 import android.app.*
-import android.content.BroadcastReceiver
-import android.content.ContentResolver
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -49,6 +46,7 @@ import org.srnd.companion.sync.CompanionSyncAdapter
 
 class CompanionApplication : SugarApp() {
     private var cachedUserData: JSONObject? = null
+    var prefs: SharedPreferences? = null
 
     private val syncFinishReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -110,6 +108,7 @@ class CompanionApplication : SugarApp() {
         }
 
         registerReceiver(syncFinishReceiver, CompanionSyncAdapter.USER_SYNC_FINISHED)
+        prefs = getSharedPreferences(getString(R.string.preferences_key), Context.MODE_PRIVATE)
     }
 
     @SuppressLint("NewApi")
@@ -161,7 +160,7 @@ class CompanionApplication : SugarApp() {
             DateTime(getUserData().getJSONObject("event").getLong("ends_at") * 1000L)
 
     fun isItCodeDay(): Boolean =
-            if (BuildConfig.DEBUG) true else getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay() || getCodeDayEndDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
+            if (prefs!!.getBoolean("dayof_debug", false)) true else getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay() || getCodeDayEndDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
 
     fun isSignedIn(): Boolean {
         val accountManager = AccountManager.get(this)
@@ -197,10 +196,9 @@ class CompanionApplication : SugarApp() {
         val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
         val nowPlaying = accountManager.getUserData(accounts[0], "now_playing")
 
-        return if(nowPlaying == null) {
+        return if(nowPlaying == null)
             null
-        } else {
+        else
             JSONObject(nowPlaying)
-        }
     }
 }

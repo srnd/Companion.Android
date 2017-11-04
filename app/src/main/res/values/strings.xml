@@ -80,4 +80,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_schedule">Schedule</string>
     <string name="title_checkin">Check-in</string>
+
+    <!-- Misc -->
+    <string name="preferences_key">org.srnd.companion.prefs</string>
 </resources>

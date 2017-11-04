@@ -57,7 +57,8 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater!!.inflate(R.layout.fragment_check_in, container, false)
 
-        user = (context.applicationContext as CompanionApplication).getUserData()
+        val app = context.applicationContext as CompanionApplication
+        user = app.getUserData()
 
         val title = view.findViewById<TextView>(R.id.ticket_title)
         title.text = getString(R.string.your_ticket, user!!.getString("first_name"))
@@ -70,6 +71,20 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
 
         val eventName = view.findViewById<TextView>(R.id.event_name)
         eventName.text = user!!.getJSONObject("event").getString("name").replace("CodeDay ", "")
+        var eventNameTaps = 0
+
+        eventName.setOnClickListener {
+            eventNameTaps++
+            if(eventNameTaps == 10) {
+                eventNameTaps = 0
+                val debugEnabled = app.prefs!!.getBoolean("dayof_debug", false)
+                Toast.makeText(context, "Day-of debug mode ${if (debugEnabled) "disabled" else "enabled"}", Toast.LENGTH_LONG).show()
+
+                val editor = app.prefs!!.edit()
+                editor.putBoolean("dayof_debug", !debugEnabled)
+                editor.apply()
+            }
+        }
 
         val fadeInAnim = AnimationUtils.loadAnimation(context, android.R.anim.fade_in)
 
