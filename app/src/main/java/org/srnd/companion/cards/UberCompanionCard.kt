@@ -20,6 +20,8 @@ package org.srnd.companion.cards
 import android.content.Context
 import android.location.Geocoder
 import android.view.View
+import com.segment.analytics.Analytics
+import com.segment.analytics.Properties
 import com.uber.sdk.android.core.UberSdk
 import com.uber.sdk.android.rides.RideParameters
 import com.uber.sdk.android.rides.RideRequestButton
@@ -38,6 +40,14 @@ class UberCompanionCard(private val context: Context) : CompanionCard() {
         val user = app.getUserData()
 
         val rideButton = view.findViewById<RideRequestButton>(R.id.ride_button)
+
+        rideButton.setOnClickListener {
+            val properties = Properties()
+                    .putValue("cardType", "uber")
+                    .putTitle("Ride there with Uber")
+
+            Analytics.with(context).track("Tapped card action", properties)
+        }
 
         doAsync {
             if(Geocoder.isPresent()) {

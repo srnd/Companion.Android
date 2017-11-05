@@ -81,6 +81,10 @@
     <string name="title_schedule">Schedule</string>
     <string name="title_checkin">Check-in</string>
 
+    <!-- Live Chat -->
+    <string name="live_chat_name">CodeDay Support</string>
+
     <!-- Misc -->
     <string name="preferences_key">org.srnd.companion.prefs</string>
+    <string name="live_chat">Live Chat</string>
 </resources>

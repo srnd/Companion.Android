@@ -8,9 +8,10 @@ android {
         applicationId "org.srnd.companion"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 28
-        versionName "0.4.13a"
+        versionCode 31
+        versionName "0.4.16a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -21,31 +22,34 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":gosquared")
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'org.jetbrains.anko:anko-common:0.9'
-    compile 'com.android.support:appcompat-v7:26.0.0'
-    compile 'com.android.support:cardview-v7:26.0.0'
-    compile 'com.android.support:recyclerview-v7:26.0.0'
-    compile 'com.android.support:design:26.0.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:support-compat:26.0.0'
-    compile 'me.dm7.barcodescanner:zxing:1.9.8'
-    compile 'com.facebook.stetho:stetho:1.5.0'
-    compile 'com.github.kittinunf.fuel:fuel-android:1.11.0'
-    compile 'com.google.firebase:firebase-messaging:11.4.2'
-    compile 'com.github.satyan:sugar:1.3.1'
-    compile 'net.danlew:android.joda:2.9.9'
-    compile 'com.google.code.gson:gson:2.1'
-    compile 'com.mindscapehq.android:raygun4android:3.0.0'
-    compile 'com.android.support:customtabs:26.0.0'
-    compile 'com.uber.sdk:rides-android:0.6.1'
-    compile 'com.github.kittinunf.fuse:fuse:0.2'
-    compile 'com.daimajia.easing:library:2.0@aar'
-    compile 'com.daimajia.androidanimations:library:2.3@aar'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'org.jetbrains.anko:anko-common:0.9'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:support-compat:26.1.0'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.8'
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.github.kittinunf.fuel:fuel-android:1.11.0'
+    implementation 'com.google.firebase:firebase-messaging:11.4.2'
+    implementation 'com.github.satyan:sugar:1.3.1'
+    implementation 'net.danlew:android.joda:2.9.9'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.mindscapehq.android:raygun4android:3.0.0'
+    implementation 'com.android.support:customtabs:26.1.0'
+    implementation 'com.uber.sdk:rides-android:0.6.1'
+    implementation 'com.github.kittinunf.fuse:fuse:0.2'
+    implementation 'com.daimajia.easing:library:2.0@aar'
+    implementation 'com.daimajia.androidanimations:library:2.3@aar'
+    implementation 'com.segment.analytics.android:analytics:4.+'
+    implementation 'com.android.support:multidex:1.0.1'
     testCompile 'junit:junit:4.12'
 }
 

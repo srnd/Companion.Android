@@ -91,11 +91,11 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/card_divider"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
-                android:background="@color/cardDividerColor"
-                android:id="@+id/card_divider"
-                android:layout_below="@id/card_song"/>
+                android:layout_below="@id/card_song"
+                android:background="@color/cardDividerColor" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

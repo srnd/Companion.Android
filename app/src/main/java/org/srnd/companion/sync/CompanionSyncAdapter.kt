@@ -20,9 +20,13 @@ package org.srnd.companion.sync
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.*
+import android.database.sqlite.SQLiteDatabaseLockedException
 import android.os.Bundle
+import android.util.Log
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.extension.responseJson
+import com.orm.SugarApp
+import com.orm.SugarDb
 import com.orm.SugarRecord
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.models.Announcement
@@ -60,27 +64,31 @@ class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThread
             }
 
             Fuel.get("/announcements/${app.getUserData().getJSONObject("event").getString("id")}").responseJson { _, _, result ->
-                val announcements = result.get().array()
+                try {
+                    val announcements = result.get().array()
 
-                for(i in 0 until announcements.length()) {
-                    val announcementObj = announcements.getJSONObject(i)
-                    val existingAnnouncements = SugarRecord.count<Announcement>(Announcement::class.java, "clear_Id = ?", arrayOf(announcementObj.getString("id")))
+                    for(i in 0 until announcements.length()) {
+                        val announcementObj = announcements.getJSONObject(i)
+                        val existingAnnouncements = SugarRecord.count<Announcement>(Announcement::class.java, "clear_Id = ?", arrayOf(announcementObj.getString("id")))
 
-                    if(existingAnnouncements == 0L) {
-                        val announcement = Announcement(
-                                clearId = announcementObj.getString("id"),
-                                title = "Announcement",
-                                message = announcementObj.getString("body")
-                        )
+                        if(existingAnnouncements == 0L) {
+                            val announcement = Announcement(
+                                    clearId = announcementObj.getString("id"),
+                                    title = "Announcement",
+                                    message = announcementObj.getString("body")
+                            )
 
-                        if(!announcementObj.isNull("link")) {
-                            val link = announcementObj.getJSONObject("link")
-                            announcement.linkText = link.getString("text")
-                            announcement.linkUri = link.getString("url")
+                            if(!announcementObj.isNull("link")) {
+                                val link = announcementObj.getJSONObject("link")
+                                announcement.linkText = link.getString("text")
+                                announcement.linkUri = link.getString("url")
+                            }
+
+                            announcement.save()
                         }
-
-                        announcement.save()
                     }
+                } catch(e: SQLiteDatabaseLockedException) {
+                    Log.w("CompanionSync", "Couldn't sync announcements due to database being locked. Migrations are probably running.")
                 }
 
                 val i = Intent("SYNC_FINISHED")

@@ -27,9 +27,16 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toolbar
 import org.srnd.companion.fragments.CheckInFragment
 import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.fragments.ScheduleFragment
+import org.srnd.gosquared.GoSquared
+import org.srnd.gosquared.GoSquaredConfig
+import org.srnd.gosquared.chat.GoSquaredSession
+import org.srnd.gosquared.models.User
 
 class MainActivity : AppCompatActivity() {
     private var navigation: BottomNavigationView? = null
@@ -105,6 +112,23 @@ class MainActivity : AppCompatActivity() {
         } else {
             showFragment(FeedFragment())
         }
+
+        val user = app.getUserData()
+        GoSquared.init(this, GoSquaredConfig(
+                siteToken = getString(R.string.gosquared_site_token),
+                chatName = getString(R.string.live_chat_name),
+                notifChannel = getString(R.string.default_notif_channel),
+                notifIcon = R.drawable.ic_codeday_white,
+                notifColor = R.color.colorPrimary
+        ), User(
+                id = user.getString("id"),
+                name = user.getString("name"),
+                custom = mapOf(
+                        "ticket" to user.getString("id"),
+                        "type" to user.getString("type"),
+                        "event" to user.getJSONObject("event").getString("name")
+                )
+        ))
     }
 
     override fun onResume() {
@@ -115,5 +139,18 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.action_bar, menu!!)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item!!.itemId) {
+            R.id.live_chat -> GoSquared.openChat(this)
+        }
+        return true
     }
 }

@@ -21,7 +21,10 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
 import android.os.Bundle
+import com.segment.analytics.Analytics
+import com.segment.analytics.Traits
 import org.json.JSONObject
+import org.srnd.companion.CompanionApplication
 import org.srnd.companion.fcm.FirebaseAssociator
 
 class AccountAdder {
@@ -35,6 +38,22 @@ class AccountAdder {
 
             AccountManager.get(context).addAccountExplicitly(account, reg["id"] as String, extraData)
             FirebaseAssociator.associateRegistration(reg["id"] as String)
+
+            val userTraits = Traits()
+                    .putName(reg.getString("name"))
+                    .putFirstName(reg.getString("first_name"))
+                    .putLastName(reg.getString("last_name"))
+                    .putAvatar(reg.getString("profile_image"))
+                    .putValue("event", reg.getJSONObject("event").getString("id"))
+                    .putValue("ticketType", reg.getString("type"))
+
+            Analytics.with(context)
+                    .identify(reg.getString("id"), userTraits, null)
+
+            val prefs = (context.applicationContext as CompanionApplication).prefs
+            val editor = prefs!!.edit()
+            editor.putBoolean("segment_identified", true)
+            editor.apply()
         }
     }
 }

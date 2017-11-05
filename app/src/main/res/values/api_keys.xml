@@ -23,4 +23,10 @@
 
     <!-- Maps -->
     <string name="maps_key">AIzaSyDqgVJM4GiNVrmg2-qWE16MojRE0kgwOh0</string>
+
+    <!-- Segment -->
+    <string name="segment_key">0ILMdiVcfpjEzkI6n154E5wFLmeCwQGL</string>
+
+    <!-- GoSquared -->
+    <string name="gosquared_site_token">GSN-894188-A</string>
 </resources>

@@ -24,3 +24,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep public class org.srnd.companion.models.** extends SugarRecord{ *; }
+-keep class com.segment.analytics.** { *; }

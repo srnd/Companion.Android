@@ -32,6 +32,8 @@ import com.facebook.stetho.Stetho
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuse.core.Fuse
 import com.orm.SugarApp
+import com.segment.analytics.Analytics
+import com.segment.analytics.Traits
 import com.uber.sdk.android.core.UberSdk
 import com.uber.sdk.core.auth.Scope
 import com.uber.sdk.rides.client.Session
@@ -43,6 +45,9 @@ import org.joda.time.DateTime
 import org.json.JSONObject
 import org.srnd.companion.dayof.CompanionAlarmReceiver
 import org.srnd.companion.sync.CompanionSyncAdapter
+import org.srnd.gosquared.GoSquared
+import org.srnd.gosquared.GoSquaredConfig
+import org.srnd.gosquared.models.User
 
 class CompanionApplication : SugarApp() {
     private var cachedUserData: JSONObject? = null
@@ -56,6 +61,7 @@ class CompanionApplication : SugarApp() {
 
     override fun onCreate() {
         super.onCreate()
+
         // set up uber api
         val uberConfig = SessionConfiguration.Builder()
                 .setClientId(getString(R.string.uber_client_id))
@@ -73,12 +79,14 @@ class CompanionApplication : SugarApp() {
         if(BuildConfig.DEBUG) Stetho.initializeWithDefaults(this)
         FuelManager.instance.basePath = "https://app.codeday.vip/api"
 
+//        Log.d("JustADebugger", FuelManager.instance.basePath)
+
         if (Build.VERSION.SDK_INT >= 26) {
             val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val eventNotifsChannelId = "event_notifications"
             val eventNotifsName = getString(R.string.event_notifications_name)
             val eventNotifsDesc = getString(R.string.event_notifications_desc)
-            val eventNotifsImportance = NotificationManager.IMPORTANCE_MAX
+            val eventNotifsImportance = NotificationManager.IMPORTANCE_HIGH
 
             val eventNotifsChannel: NotificationChannel
 
@@ -109,6 +117,30 @@ class CompanionApplication : SugarApp() {
 
         registerReceiver(syncFinishReceiver, CompanionSyncAdapter.USER_SYNC_FINISHED)
         prefs = getSharedPreferences(getString(R.string.preferences_key), Context.MODE_PRIVATE)
+
+        val analytics = Analytics.Builder(this, getString(R.string.segment_key))
+                .trackApplicationLifecycleEvents()
+                .build()
+
+        Analytics.setSingletonInstance(analytics)
+
+        if(isSignedIn() && !prefs!!.getBoolean("segment_identified", false)) {
+            val user = getUserData()
+            val userTraits = Traits()
+                    .putName(user.getString("name"))
+                    .putFirstName(user.getString("first_name"))
+                    .putLastName(user.getString("last_name"))
+                    .putAvatar(user.getString("profile_image"))
+                    .putValue("event", user.getJSONObject("event").getString("id"))
+                    .putValue("ticketType", user.getString("type"))
+
+            Analytics.with(this)
+                    .identify(user.getString("id"), userTraits, null)
+
+            val editor = prefs!!.edit()
+            editor.putBoolean("segment_identified", true)
+            editor.apply()
+        }
     }
 
     @SuppressLint("NewApi")

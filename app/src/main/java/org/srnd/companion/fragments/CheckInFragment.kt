@@ -43,18 +43,25 @@ import com.github.kittinunf.fuel.android.extension.responseJson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import com.segment.analytics.Analytics
+import com.segment.analytics.Properties
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import org.srnd.companion.dayof.SelfCheckInActivity
+import org.srnd.gosquared.GoSquared
+import org.srnd.gosquared.chat.GoSquaredSession
 
 class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment() {
     private var user: JSONObject? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+
+        Analytics.with(context).screen("Check-in")
+
         val view = inflater!!.inflate(R.layout.fragment_check_in, container, false)
 
         val app = context.applicationContext as CompanionApplication
@@ -151,6 +158,8 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
 
     private fun openSelfCheckIn() {
         val app = context.applicationContext as CompanionApplication
+
+        Analytics.with(context).track("Tapped self check-in button")
 
         if(user!!.getString("type") == "student" && (!user!!.getBoolean("has_parent") || !user!!.getBoolean("has_waiver"))) {
             promptParentInfo()

@@ -33,6 +33,8 @@ import com.github.kittinunf.fuse.core.Cache
 import com.github.kittinunf.fuse.core.Fuse
 import com.github.kittinunf.fuse.core.fetch.get
 import com.github.kittinunf.result.success
+import com.segment.analytics.Analytics
+import com.segment.analytics.Properties
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import java.net.URL
@@ -56,13 +58,19 @@ class SpotifyCompanionCard(private val context: Context) : CompanionCard() {
 
         val action = view.findViewById<Button>(R.id.spotify_action)
         action.setOnClickListener {
+            val properties = Properties()
+                    .putValue("cardType", "spotify")
+                    .putUrl(nowPlaying.getString("link"))
+                    .putTitle("View on Spotify")
+
+            Analytics.with(context).track("Tapped card action", properties)
+
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(nowPlaying.getString("link"))
             context.startActivity(intent)
         }
 
         val albumArt = view.findViewById<ImageView>(R.id.album_art)
-//        albumArt.visibility = View.INVISIBLE
 
         Fuse.bytesCache.get(URL(nowPlaying.getJSONObject("album").getString("image"))) { result, _ ->
             result.success { bytes ->
@@ -96,10 +104,6 @@ class SpotifyCompanionCard(private val context: Context) : CompanionCard() {
                 } else {
                     artistTitle.text = nowPlaying.getString("artist")
                 }
-
-//                val fadeInAnim = AnimationUtils.loadAnimation(context, android.R.anim.fade_in)
-//                if(type == Cache.Type.NOT_FOUND) albumArt.startAnimation(fadeInAnim)
-//                albumArt.visibility = View.VISIBLE
             }
         }
     }

@@ -19,6 +19,7 @@ package org.srnd.companion.dayof
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
@@ -27,6 +28,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
+import com.segment.analytics.Analytics
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.srnd.companion.BuildConfig
@@ -35,9 +37,12 @@ import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 
 class SelfCheckInActivity : AppCompatActivity() {
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+
+        Analytics.with(this).screen("Self check-in")
 
         if(!BuildConfig.DEBUG) window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         requestWindowFeature(Window.FEATURE_NO_TITLE)

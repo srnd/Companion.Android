@@ -29,7 +29,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.orm.SugarRecord
+import com.segment.analytics.Analytics
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.srnd.companion.CompanionApplication
@@ -38,6 +40,8 @@ import org.srnd.companion.cards.*
 import org.srnd.companion.cards.adapters.FeedAdapter
 import org.srnd.companion.models.Announcement
 import org.srnd.companion.sync.CompanionSyncAdapter
+import org.srnd.gosquared.GoSquared
+import org.srnd.gosquared.chat.GoSquaredSession
 
 
 class FeedFragment : Fragment() {
@@ -55,6 +59,8 @@ class FeedFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater!!.inflate(R.layout.fragment_feed, container, false)
+
+        Analytics.with(context).screen("Dashboard")
 
         recycler = view.findViewById<RecyclerView>(R.id.recycler)
 

@@ -25,6 +25,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.segment.analytics.Analytics
+import com.segment.analytics.Properties
 import org.srnd.companion.R
 import org.srnd.companion.models.Announcement
 
@@ -48,6 +50,14 @@ class AnnouncementCompanionCard(val context: Context, private val announcement: 
             actions.visibility = View.VISIBLE
             action.text = announcement.linkText
             action.setOnClickListener {
+                val properties = Properties()
+                        .putValue("announcementId", announcement.clearId)
+                        .putValue("cardType", "announcement")
+                        .putUrl(announcement.linkUri)
+                        .putTitle(announcement.linkText)
+
+                Analytics.with(context).track("Tapped card action", properties)
+
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(announcement.linkUri)
                 context.startActivity(intent)
