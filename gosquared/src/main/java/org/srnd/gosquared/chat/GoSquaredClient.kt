@@ -42,6 +42,7 @@ class GoSquaredClient(serverUri: URI?) : WebSocketClient(serverUri) {
     // listeners
     var chatMessageListener: ((message: Message) -> Unit?)? = null
     var typingListener: (() -> Unit)? = null
+    var disconnectListener: ((code: Int, reason: String?, remote: Boolean) -> Unit)? = null
 
     override fun onOpen(handshakedata: ServerHandshake?) {
         pinger = timer(period = 30000L) {
@@ -55,7 +56,8 @@ class GoSquaredClient(serverUri: URI?) : WebSocketClient(serverUri) {
     }
 
     override fun onClose(code: Int, reason: String?, remote: Boolean) {
-        Log.d(GoSquared.TAG, "WSS Connection Closed")
+        Log.d(GoSquared.TAG, "WSS Connection Closed, code: $code, reason: $reason, remote? $remote")
+        if(disconnectListener != null) disconnectListener!!.invoke(code, reason, remote)
         pinger!!.cancel()
     }
 

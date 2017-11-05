@@ -4,6 +4,8 @@ This unofficial SDK for GoSquared's live chat lets you interact with your custom
 
 ## Usage
 
+_(aar coming soon, for now just download the project. sorry!)_
+
 It's super easy to use. Wherever you want to connect to GoSquared, use this:
 
 ```kotlin
@@ -61,6 +63,18 @@ GoSquared.readMessage(message)
 
 That's about it for now. Stay tuned.
 
+## Thanks
+
+We used these wonderful open source projects to make this SDK:
+
+- [Fuel](https://github.com/kittinunf/Fuel), for requesting stuff over HTTP
+- [Fuse](https://github.com/kittinunf/Fuse), for caching the stuff
+- [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket), for realtime speedy connections
+- [Jackson](https://github.com/FasterXML/jackson-module-kotlin), for deserialization
+
 ## TODO
 
 - [ ] Custom chat bubble color
+- [ ] Separate `init` and user identification
+- [ ] For anon users, give persistent ID
+- [ ] Exponential backoff when reconnecting

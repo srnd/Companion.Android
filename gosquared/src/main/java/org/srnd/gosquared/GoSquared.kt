@@ -268,5 +268,11 @@ object GoSquared {
         connection!!.typingListener = {
             typingListeners.forEach { it() }
         }
+
+        connection!!.disconnectListener = { code: Int, reason: String?, remote: Boolean ->
+            Log.d(TAG, "Attempting to reconnect")
+            connection!!.seq = 1
+            connection!!.connect()
+        }
     }
 }
