@@ -1,0 +1,32 @@
+<!--
+  ~     Copyright (C) 2017 srnd.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="app_name">GoSquared</string>
+
+    <!-- Chat -->
+    <string name="live_chat_title">Live Chat</string>
+    <string name="typing">Typing...</string>
+    <string name="type_hint">Have a question? Ask us anything.</string>
+    <string name="send_message">Send</string>
+
+    <!-- Notifications -->
+    <string name="new_message">New message from $1s</string>
+
+    <!-- Lorem Ipsum -->
+    <string name="lorem_ipsum">fluff furries dragon Anthrocon dragon husky Biggest Little Fur Con Midwest FurFest handpaws jackal bork *hugs* yap fursuit everyfur footpaws dragon bark fursuit Midwest FurFest bark o.o Biggest Little Fur Con meow paws fursuit paws *hugs* fursona paws tails everyfur fox Biggest Little Fur Con bork footpaws fursuit handpaws paw bork purr fandom goat *hugs* fursuiter convention *hugs* furry trash trash panda footpaws convention fursuiter Anthrocon 🐺 furry Midwest FurFest Midwest</string>
+</resources>
