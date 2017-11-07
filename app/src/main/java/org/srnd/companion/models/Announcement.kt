@@ -22,13 +22,15 @@ import com.orm.SugarRecord
 import com.orm.dsl.Ignore
 import java.util.*
 
-class Announcement(
+data class Announcement(
         var clearId: String = "",
         var title: String = "Title",
         var message: String = "Message",
         var linkText: String? = null,
         var linkUri: String? = null,
         var postedAt: Date = Date(),
+        var authorUsername: String? = null,
+        var authorName: String? = null,
         @Ignore
         var imageResource: Drawable? = null
 ) : SugarRecord<Announcement>()

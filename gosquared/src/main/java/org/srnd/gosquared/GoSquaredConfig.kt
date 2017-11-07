@@ -21,8 +21,8 @@ import android.graphics.Color
 
 data class GoSquaredConfig (
         val siteToken: String?,
-        val chatName: String?,
-        val notifChannel: String?,
-        val notifIcon: Int?,
-        val notifColor: Int?
+        val chatName: String? = null,
+        val notifChannel: String? = null,
+        val notifIcon: Int? = null,
+        val notifColor: Int? = null
 )

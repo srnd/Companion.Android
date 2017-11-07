@@ -85,6 +85,17 @@ class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThread
                             }
 
                             announcement.save()
+                        } else {
+                            val announcement = SugarRecord.find<Announcement>(Announcement::class.java, "clear_Id = ?", announcementObj.getString("id"))[0]
+
+                            if(announcement.authorName == null || announcement.authorUsername == null) {
+                                val author = announcementObj.getJSONObject("creator")
+
+                                announcement.authorName = author.getString("name")
+                                announcement.authorUsername = author.getString("username")
+
+                                announcement.save()
+                            }
                         }
                     }
                 } catch(e: SQLiteDatabaseLockedException) {

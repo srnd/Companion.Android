@@ -22,6 +22,7 @@ import android.accounts.AccountManager
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.*
+import android.graphics.*
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment

@@ -33,7 +33,10 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.extension.responseJson
+import com.github.kittinunf.fuel.core.FuelError
+import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuse.core.Fuse
+import com.github.kittinunf.result.failure
 import com.github.kittinunf.result.success
 import org.json.JSONObject
 import org.srnd.gosquared.chat.GoSquaredChatActivity
@@ -65,9 +68,14 @@ object GoSquared {
     val apiBasePath = "https://api.gosquared.com/chat/v1"
     val TAG = "GoSquared"
 
+    val onNetworkError = { error: FuelError ->
+        Log.e(TAG, "Network error: ${error.message}\n\nStacktrace:\n${error.stackTrace}")
+    }
+
     // listeners
     private var chatMessageListeners: MutableList<(message: Message) -> Unit> = mutableListOf()
     private var typingListeners: MutableList<() -> Unit> = mutableListOf()
+    private var disconnectListeners: MutableList<(code: Int, reason: String?, remote: Boolean) -> Unit> = mutableListOf()
 
     private fun generateId(): String {
         val chars = "abcdef1234567890"
@@ -104,11 +112,13 @@ object GoSquared {
 
             Fuse.init(context.cacheDir.absolutePath)
 
-            Fuel.get("${apiBasePath}/clientAuth", listOf(
+            Fuel.get("$apiBasePath/clientAuth", listOf(
                     "client_id" to currentUser!!.id,
                     "site_token" to config.siteToken
-            )).responseJson { req, res, result ->
-                onReceivedToken(result.get().obj().getString("token"), context)
+            )).responseJson { _, _, result ->
+                result.success {
+                    onReceivedToken(it.obj().getString("token"), context)
+                }
             }
 
             Log.d(TAG, generateId())
@@ -150,6 +160,14 @@ object GoSquared {
         }
     }
 
+    fun registerOnDisconnectListener(onDisconnectListener: (code: Int, reason: String?, remote: Boolean) -> Unit) {
+        disconnectListeners.add(onDisconnectListener)
+    }
+
+    fun unregisterOnDisconnectListener(onDisconnectListener: (code: Int, reason: String?, remote: Boolean) -> Unit) {
+        disconnectListeners.removeAt(disconnectListeners.indexOf(onDisconnectListener))
+    }
+
     fun registerOnChatMessageListener(onChatMessageListener: (message: Message) -> Unit) {
         chatMessageListeners.add(onChatMessageListener)
     }
@@ -167,9 +185,9 @@ object GoSquared {
     }
 
     private fun onReceivedToken(token: String, context: Context) {
-        Log.d(TAG, "Received JWT ${token}")
+        Log.d(TAG, "Received JWT $token")
 
-        Fuel.get("${apiBasePath}/stream", listOf(
+        Fuel.get("$apiBasePath/stream", listOf(
                 "site_token" to config!!.siteToken,
                 "person_id" to currentUser!!.id,
                 "auth" to token
@@ -179,15 +197,19 @@ object GoSquared {
             connect(resJson.getString("url"), context)
         }
 
-        Fuel.get("${apiBasePath}/chats/${currentUser!!.id}/messages", listOf(
+        Fuel.get("$apiBasePath/chats/${currentUser!!.id}/messages", listOf(
                 "limit" to "100",
                 "site_token" to config!!.siteToken,
                 "person_id" to currentUser!!.id,
                 "auth" to token
-        )).responseJson { request, response, result ->
+        )).responseJson { _, _, result ->
             result.success { json ->
                 val messages = mapper.readValue<List<Message>>(json.obj().getJSONArray("list").toString())
                 cachedMessages.addAll(messages.reversed())
+            }
+
+            result.failure { error ->
+
             }
         }
 
@@ -222,10 +244,10 @@ object GoSquared {
                 "a" to config!!.siteToken,
                 "id" to currentUser!!.id,
                 "tv" to "6.3.1871",
-                "pu" to "http://app/AndroidApp",
-                "pt" to "Android App",
+                "pu" to "http://app/${context.packageName}",
+                "pt" to "Android App: ${context.packageName}",
                 "cp" to getQueryString(customUserData)
-        )).responseString { req, res, result ->
+        )).responseString { _, _, result ->
             Log.d(TAG, result.toString())
         }
     }
@@ -235,7 +257,12 @@ object GoSquared {
         connection!!.connect()
 
         connection!!.chatMessageListener = { message ->
-            if(shouldNotifyForNewMessage) {
+            // FIXME: this is pretty ugly
+            if(config!!.chatName != null
+                    && config!!.notifChannel != null
+                    && config!!.notifColor != null
+                    && config!!.notifIcon != null
+                    && shouldNotifyForNewMessage) {
                 unreadMessages.add(message)
                 Log.d(TAG, "Notifying for ${unreadMessages.count()} unreads")
 
@@ -270,6 +297,7 @@ object GoSquared {
         }
 
         connection!!.disconnectListener = { code: Int, reason: String?, remote: Boolean ->
+            disconnectListeners.forEach { it(code, reason, remote) }
             Log.d(TAG, "Attempting to reconnect")
             connection!!.seq = 1
             connection!!.connect()

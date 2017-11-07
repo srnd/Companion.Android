@@ -19,16 +19,25 @@ package org.srnd.companion.cards
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
+import com.daimajia.androidanimations.library.Techniques
+import com.daimajia.androidanimations.library.YoYo
+import com.github.kittinunf.fuse.core.Cache
+import com.github.kittinunf.fuse.core.Fuse
+import com.github.kittinunf.fuse.core.fetch.get
+import com.github.kittinunf.result.success
 import com.segment.analytics.Analytics
 import com.segment.analytics.Properties
+import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import org.srnd.companion.models.Announcement
+import org.srnd.companion.util.getCircularBitmap
+import org.srnd.gosquared.util.BitmapUtils
+import java.net.URL
 
 class AnnouncementCompanionCard(val context: Context, private val announcement: Announcement) : CompanionCard() {
     override val layout: Int? = R.layout.card_announcement
@@ -40,6 +49,9 @@ class AnnouncementCompanionCard(val context: Context, private val announcement: 
         val message = view.findViewById<TextView>(R.id.card_message)
         message.text = announcement.message
 
+        val authorSection = view.findViewById<LinearLayout>(R.id.author)
+        val authorImage = view.findViewById<ImageView>(R.id.author_pic)
+        val authorName = view.findViewById<TextView>(R.id.author_name)
         val image = view.findViewById<ImageView>(R.id.card_image)
         val divider = view.findViewById<View>(R.id.card_divider)
         val actions = view.findViewById<RelativeLayout>(R.id.card_actions)
@@ -74,6 +86,30 @@ class AnnouncementCompanionCard(val context: Context, private val announcement: 
         } else {
             if(announcement.linkText != null && announcement.linkUri != null) divider.visibility = View.VISIBLE
             image.visibility = View.GONE
+        }
+
+        if(announcement.authorUsername != null && announcement.authorName != null) {
+            authorSection.visibility = View.VISIBLE
+            title.visibility = View.GONE
+            authorName.text = announcement.authorName
+
+            Fuse.bytesCache.get(URL("https://s5.studentrnd.org/photo/${announcement.authorUsername}_128.png")) { result, type ->
+                result.success {
+                    val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                    authorImage.setImageBitmap(bitmap.getCircularBitmap())
+
+                    if(type == Cache.Type.NOT_FOUND) {
+                        authorImage.visibility = View.INVISIBLE
+                        YoYo.with(Techniques.FadeIn)
+                                .duration(500)
+                                .playOn(authorImage)
+                        authorImage.visibility = View.VISIBLE
+                    }
+                }
+            }
+        } else {
+            authorSection.visibility = View.GONE
+            title.visibility = View.VISIBLE
         }
     }
 

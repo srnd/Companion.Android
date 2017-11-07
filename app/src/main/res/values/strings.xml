@@ -68,6 +68,7 @@
     <string name="uber_desc">Grab a ride to CodeDay with Uber. Tap the button below to open the Uber app and request a ride to the venue.</string>
     <string name="spotify_title">Now Playing</string>
     <string name="spotify_action">View on Spotify</string>
+    <string name="codeday_staff">CodeDay Staff</string>
 
     <!-- Loading -->
     <string name="loading_title">Just a sec…</string>

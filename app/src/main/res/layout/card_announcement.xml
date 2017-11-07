@@ -34,14 +34,60 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/card_content_padding"
+                android:paddingBottom="5dp"
+                android:paddingLeft="@dimen/card_content_padding"
+                android:paddingRight="@dimen/card_content_padding"
+                android:id="@+id/author">
+
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@android:color/transparent"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/author_pic"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/author_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="James Click"
+                        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/codeday_staff"/>
+                </LinearLayout>
+            </LinearLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/card_content"
-                android:padding="@dimen/card_content_padding">
+                android:layout_below="@id/author"
+                android:paddingLeft="@dimen/card_content_padding"
+                android:paddingRight="@dimen/card_content_padding"
+                android:paddingBottom="@dimen/card_content_padding">
 
                 <TextView
                     android:id="@+id/card_title"
+                    android:layout_marginTop="@dimen/card_content_padding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/welcome"
@@ -52,9 +98,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/card_title"
-                    android:text="@string/lorem_ipsum"
                     android:layout_marginTop="5dp"
-                    android:textAppearance="@android:style/TextAppearance.Material.Small" />
+                    android:text="@string/lorem_ipsum"
+                    android:textAppearance="@android:style/TextAppearance.Material.Small"
+                    android:textSize="14sp" />
             </RelativeLayout>
 
             <ImageView
