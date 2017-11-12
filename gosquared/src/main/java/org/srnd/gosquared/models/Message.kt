@@ -18,6 +18,7 @@
 package org.srnd.gosquared.models
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.vdurmont.emoji.EmojiParser
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Message (
@@ -27,4 +28,9 @@ data class Message (
         var timestamp: Long? = null,
         var agent: Agent? = null,
         var bot: Agent? = null
-)
+) {
+    val contentEmojified: String
+    get() {
+        return EmojiParser.parseToUnicode(content)
+    }
+}

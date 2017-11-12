@@ -20,6 +20,7 @@ package org.srnd.companion.fragments
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.location.Geocoder
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
@@ -133,7 +134,7 @@ class FeedFragment : Fragment() {
             if(app.isItCodeDay() && nowPlaying != null && !nowPlaying.isNull("now_playing"))
                 cards.add(SpotifyCompanionCard(context))
 
-            if(app.isItCodeDay())
+            if(app.isItCodeDay() && Geocoder.isPresent())
                 cards.add(UberCompanionCard(context))
 
             announcements.forEach { announcement ->

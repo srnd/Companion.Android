@@ -54,7 +54,7 @@ class GoSquaredChatAdapter(var messages: List<Message>) : RecyclerView.Adapter<G
         val message = messages[position]
 
         val messageText = view.findViewById<TextView>(R.id.message_text)
-        messageText.text = message.content
+        messageText.text = message.contentEmojified
 
         Linkify.addLinks(messageText, Linkify.ALL)
 

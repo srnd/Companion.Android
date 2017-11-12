@@ -20,6 +20,7 @@ package org.srnd.companion.models
 import android.graphics.drawable.Drawable
 import com.orm.SugarRecord
 import com.orm.dsl.Ignore
+import org.joda.time.DateTime
 import java.util.*
 
 data class Announcement(
@@ -28,9 +29,14 @@ data class Announcement(
         var message: String = "Message",
         var linkText: String? = null,
         var linkUri: String? = null,
-        var postedAt: Date = Date(),
+        var postedAt: String? = null,
         var authorUsername: String? = null,
         var authorName: String? = null,
         @Ignore
         var imageResource: Drawable? = null
-) : SugarRecord<Announcement>()
+) : SugarRecord<Announcement>() {
+        val jodaPostedAt: DateTime
+        get() {
+                return DateTime.parse(postedAt)
+        }
+}

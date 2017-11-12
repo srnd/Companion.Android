@@ -19,6 +19,7 @@ package org.srnd.companion.cards
 
 import android.content.Context
 import android.location.Geocoder
+import android.util.Log
 import android.view.View
 import com.segment.analytics.Analytics
 import com.segment.analytics.Properties
@@ -54,9 +55,11 @@ class UberCompanionCard(private val context: Context) : CompanionCard() {
                 val venueAddress = user.getJSONObject("event").getJSONObject("venue").getString("full_address")
                 val geocoder = Geocoder(context)
                 val addresses = geocoder.getFromLocationName(venueAddress, 1)
+                Log.d("UberCard", venueAddress)
 
                 if(!addresses.isEmpty()) {
                     val address = addresses[0]
+                    Log.d("UberCard", address.toString())
 
                     uiThread {
                         val rideParams = RideParameters.Builder()
@@ -64,9 +67,11 @@ class UberCompanionCard(private val context: Context) : CompanionCard() {
                                 .build()
 
                         rideButton.setRideParameters(rideParams)
-                        rideButton.setSession(ServerTokenSession(UberSdk.getDefaultSessionConfiguration()))
-                        rideButton.loadRideInformation()
+//                        rideButton.setSession(ServerTokenSession(UberSdk.getDefaultSessionConfiguration()))
+//                        rideButton.loadRideInformation()
                     }
+                } else {
+                    Log.d("UberCard", addresses.toString())
                 }
             }
         }

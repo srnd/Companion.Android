@@ -31,7 +31,6 @@ import com.orm.SugarRecord
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.models.Announcement
 
-
 class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThreadedSyncAdapter(context, autoInit) {
     companion object {
         val SYNC_FINISHED = IntentFilter("SYNC_FINISHED")
@@ -72,10 +71,15 @@ class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThread
                         val existingAnnouncements = SugarRecord.count<Announcement>(Announcement::class.java, "clear_Id = ?", arrayOf(announcementObj.getString("id")))
 
                         if(existingAnnouncements == 0L) {
+                            val author = announcementObj.getJSONObject("creator")
+
                             val announcement = Announcement(
                                     clearId = announcementObj.getString("id"),
                                     title = "Announcement",
-                                    message = announcementObj.getString("body")
+                                    message = announcementObj.getString("body"),
+                                    authorName = author.getString("name"),
+                                    authorUsername = author.getString("username"),
+                                    postedAt = announcementObj.getJSONObject("posted_at").getString("date")
                             )
 
                             if(!announcementObj.isNull("link")) {
@@ -93,9 +97,12 @@ class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThread
 
                                 announcement.authorName = author.getString("name")
                                 announcement.authorUsername = author.getString("username")
-
-                                announcement.save()
                             }
+
+                            if(announcement.postedAt == null)
+                                announcement.postedAt = announcementObj.getJSONObject("posted_at").getString("date")
+
+                            announcement.save()
                         }
                     }
                 } catch(e: SQLiteDatabaseLockedException) {
