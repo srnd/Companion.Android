@@ -53,7 +53,7 @@
     <string name="before_day_of_desc">At the moment, there\'s nothing much to see here. But during CodeDay, you\'ll see stuff like announcements from the organizers and reminders for upcoming activities. For now, though, we have a countdown to CodeDay so you can get hyped!</string>
 
     <string name="skip_the_lines_title">Want to skip the check-in line?</string>
-    <string name="skip_the_lines_desc">With CodeDay Companion, you can totally skip the check-in line with self check-in. Simply open the app when you arrive, check yourself in, and show your phone to an organizer. Simple as that.</string>
+    <string name="skip_the_lines_desc">With CodeDay Companion, you can totally skip the check-in line with self check-in. You\'ll automatically get notified to check yourself in when you arrive.</string>
 
     <string name="parent_info_title">Reminder: More Info Needed</string>
     <string name="parent_info_desc">Please fill out your age and parent info now so you don\'t need to at the door. Thanks!</string>
@@ -62,6 +62,12 @@
     <string name="waiver_title">Reminder: One more step…</string>
     <string name="waiver_desc">You (or your parent) will need to fill out the waiver before you can attend. Please do that now so you don\'t need to at the event, thanks!</string>
     <string name="waiver_link">Fill Out Waiver</string>
+
+    <string name="post_event_title">CodeDay\'s over already?!</string>
+    <string name="post_event_desc">We know, we can\'t believe it either… 24 hours goes by surprisingly fast. You can be the first to know when we open registrations for next season\'s CodeDay by tapping the button below!</string>
+
+    <string name="sign_out_title">Need to sign out?</string>
+    <string name="sign_out_desc">If you\'ve already registered for next season and need to sign out of the app, tap the button at the top to do so.</string>
 
     <!-- Dynamic Cards -->
     <string name="uber_title">Need a ride?</string>
@@ -85,7 +91,17 @@
     <!-- Live Chat -->
     <string name="live_chat_name">CodeDay Support</string>
 
+    <!-- Permission Rationales -->
+    <string name="permission_location_title">Location Permission Needed</string>
+    <string name="permission_location_desc">
+        CodeDay Companion needs access to your location so we can determine when you are at CodeDay. This is used for self check-in.\n\nTo grant this permission, allow it on the next screen.
+    </string>
+
+    <!-- Log Out -->
+    <string name="sign_out_dialog_title">Are you sure you want to log out?</string>
+
     <!-- Misc -->
     <string name="preferences_key">org.srnd.companion.prefs</string>
     <string name="live_chat">Live Chat</string>
+    <string name="sign_out">Sign Out</string>
 </resources>

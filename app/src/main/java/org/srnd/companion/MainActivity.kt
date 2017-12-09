@@ -19,20 +19,27 @@ package org.srnd.companion
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toolbar
+import com.onradar.sdk.Radar
 import org.srnd.companion.fragments.CheckInFragment
 import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.fragments.ScheduleFragment
+import org.srnd.companion.util.AccountAdder
 import org.srnd.gosquared.GoSquared
 import org.srnd.gosquared.GoSquaredConfig
 import org.srnd.gosquared.chat.GoSquaredSession
@@ -82,6 +89,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         title = getString(R.string.app_name)
 
+        val hasRadarPerms = Radar.checkSelfPermissions()
+
+        if(!hasRadarPerms) {
+            val alertDialog = android.app.AlertDialog.Builder(this)
+                    .setTitle(R.string.permission_location_title)
+                    .setMessage(R.string.permission_location_desc)
+                    .setCancelable(false)
+                    .setPositiveButton("Okay", { _: DialogInterface, _: Int ->
+                        Radar.requestPermissions(this)
+                    }).create()
+
+            alertDialog.show()
+        }
+
         Log.d("Clock", SystemClock.elapsedRealtime().toString())
 
         navigation = findViewById(R.id.navigationBar)
@@ -114,21 +135,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         val user = app.getUserData()
-        GoSquared.init(this, GoSquaredConfig(
-                siteToken = getString(R.string.gosquared_site_token),
-                chatName = getString(R.string.live_chat_name),
-                notifChannel = getString(R.string.default_notif_channel),
-                notifIcon = R.drawable.ic_codeday_white,
-                notifColor = R.color.colorPrimary
-        ), User(
-                id = user.getString("id"),
-                name = user.getString("name"),
-                custom = mapOf(
-                        "ticket" to user.getString("id"),
-                        "type" to user.getString("type"),
-                        "event" to user.getJSONObject("event").getString("name")
-                )
-        ))
+//        GoSquared.init(this, GoSquaredConfig(
+//                siteToken = getString(R.string.gosquared_site_token),
+//                chatName = getString(R.string.live_chat_name),
+//                notifChannel = getString(R.string.default_notif_channel),
+//                notifIcon = R.drawable.ic_codeday_white,
+//                notifColor = R.color.colorPrimary
+//        ), User(
+//                id = user.getString("id"),
+//                name = user.getString("name"),
+//                custom = mapOf(
+//                        "ticket" to user.getString("id"),
+//                        "type" to user.getString("type"),
+//                        "event" to user.getJSONObject("event").getString("name")
+//                )
+//        ))
     }
 
     override fun onResume() {
@@ -149,7 +170,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item!!.itemId) {
-            R.id.live_chat -> GoSquared.openChat(this)
+            R.id.sign_out -> {
+                val alertDialog = AlertDialog.Builder(this)
+                        .setTitle(R.string.sign_out_dialog_title)
+                        .setCancelable(false)
+                        .setNegativeButton("Cancel", { dialog: DialogInterface, _: Int ->
+                            dialog.dismiss()
+                        })
+                        .setPositiveButton("Log Out", { dialog: DialogInterface, _: Int ->
+                            AccountAdder.removeAllAccounts(this)
+                            val intent = Intent(this, LoginActivity::class.java)
+                            startActivity(intent)
+                            dialog.dismiss()
+                            finish()
+                        }).create()
+
+                alertDialog.show()
+            }
         }
         return true
     }

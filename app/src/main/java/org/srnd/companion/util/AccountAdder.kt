@@ -19,8 +19,10 @@ package org.srnd.companion.util
 
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.accounts.AccountManagerFuture
 import android.content.Context
 import android.os.Bundle
+import com.onradar.sdk.Radar
 import com.segment.analytics.Analytics
 import com.segment.analytics.Traits
 import org.json.JSONObject
@@ -29,6 +31,16 @@ import org.srnd.companion.fcm.FirebaseAssociator
 
 class AccountAdder {
     companion object {
+        fun removeAllAccounts(context: Context) {
+            val accountManager = AccountManager.get(context)
+            val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+
+            if(accounts.isNotEmpty())
+                accountManager.removeAccount(accounts[0], { future: AccountManagerFuture<Boolean> ->
+                    future.getResult()
+                }, null)
+        }
+
         fun addAccount(context: Context, reg: JSONObject) {
             val account = Account(reg["name"] as String, "codeday.org")
 
@@ -49,6 +61,10 @@ class AccountAdder {
 
             Analytics.with(context)
                     .identify(reg.getString("id"), userTraits, null)
+
+            Radar.setUserId(reg.getString("id"))
+            Radar.setDescription(reg.getString("name"))
+            Radar.startTracking()
 
             val prefs = (context.applicationContext as CompanionApplication).prefs
             val editor = prefs!!.edit()

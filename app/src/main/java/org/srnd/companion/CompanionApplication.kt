@@ -32,6 +32,7 @@ import android.util.Log
 import com.facebook.stetho.Stetho
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuse.core.Fuse
+import com.onradar.sdk.Radar
 import com.orm.SugarApp
 import com.segment.analytics.Analytics
 import com.segment.analytics.Traits
@@ -63,6 +64,12 @@ class CompanionApplication : SugarApp() {
     override fun onCreate() {
         super.onCreate()
 
+//        if(isSignedIn() && isItAfterCodeDay()) {
+//            val accountManager = AccountManager.get(this)
+//            val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+//
+//        }
+
         // set up uber api
         val uberConfig = SessionConfiguration.Builder()
                 .setClientId(getString(R.string.uber_client_id))
@@ -80,8 +87,6 @@ class CompanionApplication : SugarApp() {
         if(BuildConfig.DEBUG) Stetho.initializeWithDefaults(this)
         FuelManager.instance.basePath = "https://app.codeday.vip/api"
 
-//        Log.d("JustADebugger", FuelManager.instance.basePath)
-
         if (Build.VERSION.SDK_INT >= 26) {
             val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val eventNotifsChannelId = "event_notifications"
@@ -98,11 +103,12 @@ class CompanionApplication : SugarApp() {
             notifManager.createNotificationChannel(eventNotifsChannel)
         }
 
-//        setAlarmIfNeeded()
-
         if(!BuildConfig.DEBUG) {
             RaygunClient.init(this)
             RaygunClient.attachExceptionHandler()
+            Radar.initialize(this, getString(R.string.radar_pk_live))
+        } else {
+            Radar.initialize(this, getString(R.string.radar_pk_test))
         }
 
         if(isSignedIn() && !BuildConfig.DEBUG) {
@@ -114,6 +120,13 @@ class CompanionApplication : SugarApp() {
             raygunUser.setAnonymous(false)
 
             RaygunClient.setUser(raygunUser)
+        }
+
+        if(isSignedIn()) {
+            val user = getUserData()
+            Radar.setUserId(user.getString("id"))
+            Radar.setDescription(user.getString("name"))
+            Radar.startTracking()
         }
 
         registerReceiver(syncFinishReceiver, CompanionSyncAdapter.USER_SYNC_FINISHED)
@@ -195,6 +208,9 @@ class CompanionApplication : SugarApp() {
     fun isItCodeDay(): Boolean =
             if (prefs!!.getBoolean("dayof_debug", false)) true else getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay() || getCodeDayEndDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
 
+    fun isItAfterCodeDay(): Boolean =
+            getCodeDayEndDate().withTimeAtStartOfDay() < DateTime.now().withTimeAtStartOfDay()
+
     fun isSignedIn(): Boolean {
         val accountManager = AccountManager.get(this)
         val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
@@ -214,9 +230,11 @@ class CompanionApplication : SugarApp() {
     }
 
     fun refreshUserData() {
-        val accountManager = AccountManager.get(this)
-        val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
-        cachedUserData = JSONObject(accountManager.getUserData(accounts[0], "raw"))
+        if(isSignedIn()) {
+            val accountManager = AccountManager.get(this)
+            val accounts: Array<Account> = accountManager.getAccountsByType("codeday.org")
+            cachedUserData = JSONObject(accountManager.getUserData(accounts[0], "raw"))
+        }
     }
 
     fun getUserData(): JSONObject {

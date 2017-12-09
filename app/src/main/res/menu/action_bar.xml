@@ -19,8 +19,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/live_chat"
-        android:icon="@drawable/ic_action_live_help"
-        android:title="@string/live_chat"
+        android:id="@+id/sign_out"
+        android:icon="@drawable/ic_exit_to_app_white_24dp"
+        android:title="@string/sign_out"
         app:showAsAction="always"/>
 </menu>

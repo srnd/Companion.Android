@@ -8,8 +8,8 @@ android {
         applicationId "org.srnd.companion"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 32
-        versionName "0.4.17a"
+        versionCode 35
+        versionName "0.5.0a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -38,7 +38,7 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.8'
     implementation 'com.facebook.stetho:stetho:1.5.0'
     implementation 'com.github.kittinunf.fuel:fuel-android:1.11.0'
-    implementation 'com.google.firebase:firebase-messaging:11.4.2'
+    implementation 'com.google.firebase:firebase-messaging:11.6.2'
     implementation 'com.github.satyan:sugar:1.3.1'
     implementation 'net.danlew:android.joda:2.9.9'
     implementation 'com.google.code.gson:gson:2.8.0'
@@ -49,7 +49,10 @@ dependencies {
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
     implementation 'com.segment.analytics.android:analytics:4.+'
-    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.android.support:multidex:1.0.2'
+    implementation('com.onradar:sdk:1.2.+') {
+        exclude module: 'support-v4'
+    }
     testCompile 'junit:junit:4.12'
 }
 

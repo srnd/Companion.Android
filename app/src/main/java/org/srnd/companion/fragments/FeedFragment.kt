@@ -108,8 +108,24 @@ class FeedFragment : Fragment() {
 
             val date = app.getCodeDayDate()
 
-            if(!app.isItCodeDay())
+            if(!app.isItCodeDay() && !app.isItAfterCodeDay())
                 cards.add(CountdownCompanionCard(context))
+
+            if(app.isItAfterCodeDay()) {
+                cards.add(AnnouncementCompanionCard(context, Announcement(
+                        clearId = "sign_out",
+                        title = getString(R.string.sign_out_title),
+                        message = getString(R.string.sign_out_desc)
+                )))
+
+                cards.add(AnnouncementCompanionCard(context, Announcement(
+                        clearId = "post_event",
+                        title = getString(R.string.post_event_title),
+                        message = getString(R.string.post_event_desc),
+                        linkText = "Get Notified",
+                        linkUri = "https://codeday.org"
+                )))
+            }
 
             if(!app.getUserData().getBoolean("has_age") || !app.getUserData().getBoolean("has_parent")) {
                 cards.add(AnnouncementCompanionCard(context, Announcement(
