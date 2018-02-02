@@ -76,6 +76,8 @@ class FeedFragment : Fragment() {
             (context.applicationContext as CompanionApplication).sync()
         }
 
+        recycler!!.adapter = adapter
+
         initData()
         return view
     }

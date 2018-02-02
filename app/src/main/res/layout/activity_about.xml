@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~     Copyright (C) 2017 srnd.org
+  ~     Copyright (C) 2018 srnd.org
   ~
   ~     This program is free software: you can redistribute it and/or modify
   ~     it under the terms of the GNU General Public License as published by
@@ -16,17 +16,11 @@
   ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.srnd.companion.AboutActivity">
 
-    <!--<item-->
-        <!--android:id="@+id/about"-->
-        <!--android:icon="@drawable/ic_exit_to_app_white_24dp"-->
-        <!--android:title="@string/about"-->
-        <!--app:showAsAction="never"/>-->
-    <item
-        android:id="@+id/sign_out"
-        android:icon="@drawable/ic_exit_to_app_white_24dp"
-        android:title="@string/sign_out"
-        app:showAsAction="always"/>
-</menu>
+</android.support.constraint.ConstraintLayout>

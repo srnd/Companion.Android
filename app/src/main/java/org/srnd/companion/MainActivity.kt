@@ -17,6 +17,7 @@
 
 package org.srnd.companion
 
+import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
 import android.content.DialogInterface
@@ -26,6 +27,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
@@ -48,6 +50,11 @@ import org.srnd.gosquared.models.User
 class MainActivity : AppCompatActivity() {
     private var navigation: BottomNavigationView? = null
     private var normalBrightness: Float = 0F
+    private var fragments = listOf(
+            FeedFragment(),
+            ScheduleFragment(),
+            CheckInFragment()
+    )
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         if(item.itemId == navigation!!.selectedItemId) return@OnNavigationItemSelectedListener false
@@ -55,9 +62,9 @@ class MainActivity : AppCompatActivity() {
         var fragment: Fragment? = null
 
         when (item.itemId) {
-            R.id.navigation_dashboard -> fragment = FeedFragment()
-            R.id.navigation_schedule -> fragment = ScheduleFragment()
-            R.id.navigation_checkin -> fragment = CheckInFragment()
+            R.id.navigation_dashboard -> fragment = fragments[0]
+            R.id.navigation_schedule -> fragment = fragments[1]
+            R.id.navigation_checkin -> fragment = fragments[2]
         }
 
         val attrs = window.attributes
@@ -91,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
         val hasRadarPerms = Radar.checkSelfPermissions()
 
-        if(!hasRadarPerms) {
+        if(!hasRadarPerms && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
             val alertDialog = android.app.AlertDialog.Builder(this)
                     .setTitle(R.string.permission_location_title)
                     .setMessage(R.string.permission_location_desc)
@@ -131,7 +138,7 @@ class MainActivity : AppCompatActivity() {
             val fragment = CheckInFragment(showSelfCheckIn = true)
             showFragment(fragment)
         } else {
-            showFragment(FeedFragment())
+            showFragment(fragments[0])
         }
 
         val user = app.getUserData()

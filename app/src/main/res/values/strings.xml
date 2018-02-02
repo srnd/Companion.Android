@@ -103,5 +103,6 @@
     <!-- Misc -->
     <string name="preferences_key">org.srnd.companion.prefs</string>
     <string name="live_chat">Live Chat</string>
+    <string name="about">About</string>
     <string name="sign_out">Sign Out</string>
 </resources>

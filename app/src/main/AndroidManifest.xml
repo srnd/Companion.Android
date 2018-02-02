@@ -7,10 +7,10 @@
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -62,7 +62,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver android:name=".dayof.CompanionAlarmReceiver"/>
+
+        <receiver android:name=".dayof.CompanionAlarmReceiver" />
 
         <provider
             android:name=".sync.CompanionContentProvider"
@@ -97,18 +98,21 @@
             android:configChanges="orientation"
             android:label="@string/app_name_short"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".dayof.SelfCheckInActivity"
-            android:theme="@style/AppTheme.CheckIn"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.CheckIn" />
 
-        <service android:name="main.java.com.mindscapehq.android.raygun4android.RaygunPostService"
+        <service
+            android:name="main.java.com.mindscapehq.android.raygun4android.RaygunPostService"
             android:exported="false"
-            android:process=":raygunpostservice"/>
+            android:process=":raygunpostservice" />
 
-        <meta-data android:name="com.mindscapehq.android.raygun4android.apikey"
+        <meta-data
+            android:name="com.mindscapehq.android.raygun4android.apikey"
             android:value="3eTZOOj3av+xKaAFiQ/SiA==" />
+
+        <activity android:name=".AboutActivity"></activity>
     </application>
 
 </manifest>

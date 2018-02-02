@@ -123,10 +123,15 @@ class CompanionApplication : SugarApp() {
         }
 
         if(isSignedIn()) {
-            val user = getUserData()
-            Radar.setUserId(user.getString("id"))
-            Radar.setDescription(user.getString("name"))
-            Radar.startTracking()
+            // uhhhhhhhhhh
+            if(isItCodeDay()) {
+                val user = getUserData()
+                Radar.setUserId(user.getString("id"))
+                Radar.setDescription(user.getString("name"))
+                Radar.startTracking()
+            }
+        } else {
+            Radar.stopTracking()
         }
 
         registerReceiver(syncFinishReceiver, CompanionSyncAdapter.USER_SYNC_FINISHED)
@@ -206,7 +211,11 @@ class CompanionApplication : SugarApp() {
             DateTime(getUserData().getJSONObject("event").getLong("ends_at") * 1000L)
 
     fun isItCodeDay(): Boolean =
-            if (prefs!!.getBoolean("dayof_debug", false)) true else getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay() || getCodeDayEndDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
+            if (prefs != null && prefs!!.getBoolean("dayof_debug", false)) {
+                true
+            } else {
+                getCodeDayDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay() || getCodeDayEndDate().withTimeAtStartOfDay() == DateTime.now().withTimeAtStartOfDay()
+            }
 
     fun isItAfterCodeDay(): Boolean =
             getCodeDayEndDate().withTimeAtStartOfDay() < DateTime.now().withTimeAtStartOfDay()
