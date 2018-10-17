@@ -17,7 +17,13 @@
 
 package org.srnd.companion
 
+import java.util.*
+
 object Constants {
     const val CHECK_IN_ALARM = 113
     const val ALARM_TAG = "CompanionAlarms"
+
+    val BLE_CODEDAY_SERVICE = UUID.fromString("00000000-0000-0000-0000-00000c0dedae")
+    val BLE_CODEDAY_CHARACTERISTIC = UUID.fromString("00000000-0000-0000-0000-00000c0dedaf")
+    val BLE_CODEDAY_EVENT_DESCRIPTOR = UUID.fromString("00000000-0000-0000-0000-00000c0dedad")
 }

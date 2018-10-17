@@ -33,18 +33,16 @@ import org.jetbrains.anko.uiThread
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import org.srnd.companion.fragments.schedule.ScheduleDayAdapter
-import org.srnd.gosquared.GoSquared
-import org.srnd.gosquared.chat.GoSquaredSession
 
 class ScheduleFragment : Fragment() {
     private var recycler: RecyclerView? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
         Analytics.with(context).screen("Schedule")
 
-        val app = context.applicationContext as CompanionApplication
+        val app = context!!.applicationContext as CompanionApplication
         val view = inflater!!.inflate(R.layout.fragment_schedule, container, false)
 
         recycler = view.findViewById(R.id.recycler)
@@ -57,7 +55,7 @@ class ScheduleFragment : Fragment() {
 
         doAsync {
             val schedule = app.getUserData().getJSONObject("event").getJSONObject("schedule")
-            val adapter = ScheduleDayAdapter(context, schedule)
+            val adapter = ScheduleDayAdapter(context!!, schedule)
             recycler!!.adapter = adapter
         }
 

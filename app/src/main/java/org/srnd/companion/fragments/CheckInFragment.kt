@@ -18,6 +18,7 @@
 package org.srnd.companion.fragments
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -26,6 +27,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -50,27 +52,26 @@ import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
+import org.srnd.companion.dayof.BleSignatureManager
 import org.srnd.companion.dayof.SelfCheckInActivity
-import org.srnd.gosquared.GoSquared
-import org.srnd.gosquared.chat.GoSquaredSession
 
-class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment() {
+class CheckInFragment : Fragment() {
     private var user: JSONObject? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
         Analytics.with(context).screen("Check-in")
 
-        val view = inflater!!.inflate(R.layout.fragment_check_in, container, false)
+        val view = inflater.inflate(R.layout.fragment_check_in, container, false)
 
-        val app = context.applicationContext as CompanionApplication
+        val app = context!!.applicationContext as CompanionApplication
         user = app.getUserData()
 
         val title = view.findViewById<TextView>(R.id.ticket_title)
         title.text = getString(R.string.your_ticket, user!!.getString("first_name"))
 
-        val avenirNext = Typeface.createFromAsset(context.assets, "fonts/AvenirNextDemiBold.ttf")
+        val avenirNext = Typeface.createFromAsset(context!!.assets, "fonts/AvenirNextDemiBold.ttf")
         title.typeface = avenirNext
 
         val ticketType = view.findViewById<TextView>(R.id.ticket_type)
@@ -128,13 +129,11 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
             }
         }
 
-        if(showSelfCheckIn) openSelfCheckIn()
-
         return view
     }
 
     private fun promptParentInfo() {
-        val app = context.applicationContext as CompanionApplication
+        val app = context!!.applicationContext as CompanionApplication
 
         val alertDialog = AlertDialog.Builder(context)
                 .setTitle("One more step!")
@@ -148,7 +147,7 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
                     }
 
                     val builder = CustomTabsIntent.Builder()
-                    builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    builder.setToolbarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
                     val customTabsIntent = builder.build()
                     customTabsIntent.launchUrl(context, Uri.parse(url))
                 }).create()
@@ -156,8 +155,56 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
         alertDialog.show()
     }
 
+    private fun attemptSelfCheckIn(app: CompanionApplication, dialog: ProgressDialog, bleToken: String? = null) {
+        dialog.setMessage(context!!.getString(R.string.check_in_loading))
+
+        val params = if(bleToken != null)
+            listOf("token" to bleToken)
+        else
+            listOf()
+
+        Fuel.get("/checkin/${user!!.getString("id")}", params).responseJson { _, _, result ->
+            val res = result.get().obj()
+
+            Log.d("CheckIn", res.toString())
+
+            if(res.getBoolean("ok") && res.has("code")) {
+                app.setAccountData("check_in_code", res.getString("code"))
+                dialog.dismiss()
+                val intent = Intent(context, SelfCheckInActivity::class.java)
+                startActivity(intent)
+            } else if(res.has("error_code") && res.getString("error_code") == "BEACON_REQUIRED") {
+                val signatureManager = BleSignatureManager(context!!)
+
+                if(signatureManager.requestPermissions(activity!!)) {
+                    signatureManager.getToken({
+                        dialog.setMessage(it)
+                    }, { token, error ->
+                        if(error != null) {
+                            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+                            dialog.dismiss()
+                        } else {
+                            attemptSelfCheckIn(app, dialog, token)
+                        }
+                    })
+                } else {
+                    dialog.dismiss()
+                }
+            } else {
+                // TODO: We should probably use an error_code for this instead lol
+                if(res.getString("error") == "Please fill out your parent info and sign the waiver before checking in.") {
+                    promptParentInfo()
+                } else {
+                    Toast.makeText(context, res.getString("error"), Toast.LENGTH_LONG).show()
+                }
+
+                dialog.dismiss()
+            }
+        }
+    }
+
     private fun openSelfCheckIn() {
-        val app = context.applicationContext as CompanionApplication
+        val app = context!!.applicationContext as CompanionApplication
 
         Analytics.with(context).track("Tapped self check-in button")
 
@@ -171,27 +218,14 @@ class CheckInFragment(private val showSelfCheckIn: Boolean = false) : Fragment()
         dialog.setCancelable(false)
 
         if(app.getAccountData("check_in_code") == null) {
-            dialog.setMessage(context.getString(R.string.check_in_loading))
+            dialog.setMessage(context!!.getString(R.string.check_in_loading))
             dialog.show()
 
-            Fuel.get("/checkin/${user!!.getString("id")}").responseJson { _, _, result ->
-                val res = result.get().obj()
-
-                Log.d("CheckIn", res.toString())
-
-                if(res.getBoolean("ok") && res.has("code")) {
-                    app.setAccountData("check_in_code", res.getString("code"))
-                    val intent = Intent(context, SelfCheckInActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    if(res.getString("error") == "Please fill out your parent info and sign the waiver before checking in.") {
-                        promptParentInfo()
-                    } else {
-                        Toast.makeText(context, res.getString("error"), Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                dialog.hide()
+            try {
+                attemptSelfCheckIn(app, dialog)
+            } catch(e: Exception) {
+                Toast.makeText(context, "Something went wrong while checking you in.", Toast.LENGTH_LONG).show()
+                dialog.dismiss()
             }
         } else {
             val intent = Intent(context, SelfCheckInActivity::class.java)

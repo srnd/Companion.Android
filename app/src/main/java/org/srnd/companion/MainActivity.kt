@@ -42,10 +42,6 @@ import org.srnd.companion.fragments.CheckInFragment
 import org.srnd.companion.fragments.FeedFragment
 import org.srnd.companion.fragments.ScheduleFragment
 import org.srnd.companion.util.AccountAdder
-import org.srnd.gosquared.GoSquared
-import org.srnd.gosquared.GoSquaredConfig
-import org.srnd.gosquared.chat.GoSquaredSession
-import org.srnd.gosquared.models.User
 
 class MainActivity : AppCompatActivity() {
     private var navigation: BottomNavigationView? = null
@@ -135,7 +131,7 @@ class MainActivity : AppCompatActivity() {
 
             navigation!!.selectedItemId = R.id.navigation_checkin
 
-            val fragment = CheckInFragment(showSelfCheckIn = true)
+            val fragment = CheckInFragment()
             showFragment(fragment)
         } else {
             showFragment(fragments[0])

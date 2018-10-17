@@ -6,4 +6,5 @@
     <color name="colorGreen">#76C597</color>
     <color name="colorBlue">#80C2DA</color>
     <color name="cardDividerColor">#E6E6E6</color>
+    <color name="separator">#D9D9D9</color>
 </resources>

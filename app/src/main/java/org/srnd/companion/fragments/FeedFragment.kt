@@ -30,7 +30,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.orm.SugarRecord
 import com.segment.analytics.Analytics
 import org.jetbrains.anko.doAsync
@@ -41,9 +40,6 @@ import org.srnd.companion.cards.*
 import org.srnd.companion.cards.adapters.FeedAdapter
 import org.srnd.companion.models.Announcement
 import org.srnd.companion.sync.CompanionSyncAdapter
-import org.srnd.gosquared.GoSquared
-import org.srnd.gosquared.chat.GoSquaredSession
-
 
 class FeedFragment : Fragment() {
     private var recycler: RecyclerView? = null
@@ -57,7 +53,7 @@ class FeedFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater!!.inflate(R.layout.fragment_feed, container, false)
 
@@ -73,7 +69,7 @@ class FeedFragment : Fragment() {
         refresher = view.findViewById(R.id.refresher)
         refresher!!.setColorSchemeResources(R.color.colorPrimary, R.color.colorGreen, R.color.colorBlue)
         refresher!!.setOnRefreshListener {
-            (context.applicationContext as CompanionApplication).sync()
+            (context!!.applicationContext as CompanionApplication).sync()
         }
 
         recycler!!.adapter = adapter
@@ -84,43 +80,43 @@ class FeedFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val app = context.applicationContext as CompanionApplication
+        val app = context!!.applicationContext as CompanionApplication
 
         if(app.isItCodeDay())
-            context.registerReceiver(syncFinishReceiver, CompanionSyncAdapter.NOW_PLAYING_SYNC_FINISHED)
+            context!!.registerReceiver(syncFinishReceiver, CompanionSyncAdapter.NOW_PLAYING_SYNC_FINISHED)
         else
-            context.registerReceiver(syncFinishReceiver, CompanionSyncAdapter.SYNC_FINISHED)
+            context!!.registerReceiver(syncFinishReceiver, CompanionSyncAdapter.SYNC_FINISHED)
     }
 
     override fun onPause() {
         super.onPause()
-        context.unregisterReceiver(syncFinishReceiver)
+        context!!.unregisterReceiver(syncFinishReceiver)
     }
 
     fun initData() {
         Log.d("init", "calling initdata")
         doAsync {
-            val app = context.applicationContext as CompanionApplication
+            val app = context!!.applicationContext as CompanionApplication
 
             val announcements = SugarRecord.listAll(Announcement::class.java)
 
             val cards: MutableList<CompanionCard> = mutableListOf(
-                    WelcomeCompanionCard(context)
+                    WelcomeCompanionCard(context!!)
             )
 
             val date = app.getCodeDayDate()
 
             if(!app.isItCodeDay() && !app.isItAfterCodeDay())
-                cards.add(CountdownCompanionCard(context))
+                cards.add(CountdownCompanionCard(context!!))
 
             if(app.isItAfterCodeDay()) {
-                cards.add(AnnouncementCompanionCard(context, Announcement(
+                cards.add(AnnouncementCompanionCard(context!!, Announcement(
                         clearId = "sign_out",
                         title = getString(R.string.sign_out_title),
                         message = getString(R.string.sign_out_desc)
                 )))
 
-                cards.add(AnnouncementCompanionCard(context, Announcement(
+                cards.add(AnnouncementCompanionCard(context!!, Announcement(
                         clearId = "post_event",
                         title = getString(R.string.post_event_title),
                         message = getString(R.string.post_event_desc),
@@ -130,7 +126,7 @@ class FeedFragment : Fragment() {
             }
 
             if(!app.getUserData().getBoolean("has_age") || !app.getUserData().getBoolean("has_parent")) {
-                cards.add(AnnouncementCompanionCard(context, Announcement(
+                cards.add(AnnouncementCompanionCard(context!!, Announcement(
                         clearId = "info_reminder",
                         title = getString(R.string.parent_info_title),
                         message = getString(R.string.parent_info_desc),
@@ -138,7 +134,7 @@ class FeedFragment : Fragment() {
                         linkUri = "https://codeday.vip/${app.getUserData().getString("id")}"
                 )))
             } else if(!app.getUserData().getBoolean("has_waiver")) {
-                cards.add(AnnouncementCompanionCard(context, Announcement(
+                cards.add(AnnouncementCompanionCard(context!!, Announcement(
                         clearId = "waiver_reminder",
                         title = getString(R.string.waiver_title),
                         message = getString(R.string.waiver_desc),
@@ -150,44 +146,44 @@ class FeedFragment : Fragment() {
             val nowPlaying = app.getNowPlaying()
 
             if(app.isItCodeDay() && nowPlaying != null && !nowPlaying.isNull("now_playing"))
-                cards.add(SpotifyCompanionCard(context))
+                cards.add(SpotifyCompanionCard(context!!))
 
             if(app.isItCodeDay() && Geocoder.isPresent())
-                cards.add(UberCompanionCard(context))
+                cards.add(UberCompanionCard(context!!))
 
             announcements.forEach { announcement ->
-                cards.add(AnnouncementCompanionCard(context, announcement))
+                cards.add(AnnouncementCompanionCard(context!!, announcement))
             }
 
             if(!app.isItCodeDay()) {
-                cards.add(AnnouncementCompanionCard(context, Announcement(
+                cards.add(AnnouncementCompanionCard(context!!, Announcement(
                         clearId = "before_day_of",
                         title = getString(R.string.before_day_of_title),
                         message = getString(R.string.before_day_of_desc)
                 )))
 
-                cards.add(AnnouncementCompanionCard(context, Announcement(
+                cards.add(AnnouncementCompanionCard(context!!, Announcement(
                         clearId = "skip_the_lines",
                         title = getString(R.string.skip_the_lines_title),
                         message = getString(R.string.skip_the_lines_desc)
                 )))
 
-                cards.add(AnnouncementCompanionCard(context, Announcement(
+                cards.add(AnnouncementCompanionCard(context!!, Announcement(
                         clearId = "share",
                         title = getString(R.string.share_title),
                         message = getString(R.string.share_desc),
                         linkText = getString(R.string.share_title),
                         linkUri = "https://codeday.org/share",
-                        imageResource = context.getDrawable(R.drawable.codeday_header)
+                        imageResource = context!!.getDrawable(R.drawable.codeday_header)
                 )))
             }
 
             if(app.isItCodeDay())
-                cards.add(AnnouncementCompanionCard(context, Announcement(
+                cards.add(AnnouncementCompanionCard(context!!, Announcement(
                         clearId = "day_of",
                         title = getString(R.string.day_of_title),
                         message = getString(R.string.day_of_desc),
-                        imageResource = context.getDrawable(R.drawable.jump)
+                        imageResource = context!!.getDrawable(R.drawable.jump)
                 )))
 
             uiThread {

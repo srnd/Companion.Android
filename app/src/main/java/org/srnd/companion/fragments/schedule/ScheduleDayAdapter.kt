@@ -28,12 +28,12 @@ import org.json.JSONObject
 import org.srnd.companion.R
 
 class ScheduleDayAdapter(val context: Context, private val days: JSONObject) : RecyclerView.Adapter<ScheduleHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ScheduleHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleHolder {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.adapter_schedule_day, parent, false)
         return ScheduleHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ScheduleHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ScheduleHolder, position: Int) {
         val view = holder!!.itemView
         val recycler = view.findViewById<RecyclerView>(R.id.recycler)
         val day = days.getJSONArray(days.names()[position].toString())

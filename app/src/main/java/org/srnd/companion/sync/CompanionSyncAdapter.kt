@@ -42,76 +42,81 @@ class CompanionSyncAdapter(context: Context, autoInit: Boolean) : AbstractThread
         val accountManager = AccountManager.get(context)
         val app = context.applicationContext as CompanionApplication
 
-        Fuel.get("/ticket/${app.getUserData().getString("id")}").responseJson { _, _, userRes ->
-            val res = userRes.get().obj()
+        try {
+            Fuel.get("/ticket/${app.getUserData().getString("id")}").responseJson { _, _, userRes ->
+                val res = userRes.get().obj()
 
-            if(res.getBoolean("ok")) {
-                accountManager.setUserData(account, "raw", userRes.get().obj().toString())
+                if(res.getBoolean("ok")) {
+                    accountManager.setUserData(account, "raw", userRes.get().obj().toString())
 
-                val i = Intent("USER_SYNC_FINISHED")
-                context.sendBroadcast(i)
-            }
+                    val i = Intent("USER_SYNC_FINISHED")
+                    context.sendBroadcast(i)
+                }
 
-            if(app.isItCodeDay()) {
-                Fuel.get("/nowplaying/${app.getUserData().getJSONObject("event").getString("id")}").responseJson { _, _, result ->
-                    val nowPlaying = result.get().obj()
-                    accountManager.setUserData(account, "now_playing", nowPlaying.toString())
+                if(app.isItCodeDay()) {
+                    Fuel.get("/nowplaying/${app.getUserData().getJSONObject("event").getString("id")}").responseJson { _, _, result ->
+                        val nowPlaying = result.get().obj()
+                        accountManager.setUserData(account, "now_playing", nowPlaying.toString())
 
-                    val i = Intent("NOW_PLAYING_FINISHED")
+                        val i = Intent("NOW_PLAYING_FINISHED")
+                        context.sendBroadcast(i)
+                    }
+                }
+
+                Fuel.get("/announcements/${app.getUserData().getJSONObject("event").getString("id")}").responseJson { _, _, result ->
+                    try {
+                        val announcements = result.get().array()
+
+                        for(i in 0 until announcements.length()) {
+                            val announcementObj = announcements.getJSONObject(i)
+                            val existingAnnouncements = SugarRecord.count<Announcement>(Announcement::class.java, "clear_Id = ?", arrayOf(announcementObj.getString("id")))
+
+                            if(existingAnnouncements == 0L) {
+                                val author = announcementObj.getJSONObject("creator")
+
+                                val announcement = Announcement(
+                                        clearId = announcementObj.getString("id"),
+                                        title = "Announcement",
+                                        message = announcementObj.getString("body"),
+                                        authorName = author.getString("name"),
+                                        authorUsername = author.getString("username"),
+                                        postedAt = announcementObj.getJSONObject("posted_at").getString("date")
+                                )
+
+                                if(!announcementObj.isNull("link")) {
+                                    val link = announcementObj.getJSONObject("link")
+                                    announcement.linkText = link.getString("text")
+                                    announcement.linkUri = link.getString("url")
+                                }
+
+                                announcement.save()
+                            } else {
+                                val announcement = SugarRecord.find<Announcement>(Announcement::class.java, "clear_Id = ?", announcementObj.getString("id"))[0]
+
+                                if(announcement.authorName == null || announcement.authorUsername == null) {
+                                    val author = announcementObj.getJSONObject("creator")
+
+                                    announcement.authorName = author.getString("name")
+                                    announcement.authorUsername = author.getString("username")
+                                }
+
+                                if(announcement.postedAt == null)
+                                    announcement.postedAt = announcementObj.getJSONObject("posted_at").getString("date")
+
+                                announcement.save()
+                            }
+                        }
+                    } catch(e: SQLiteDatabaseLockedException) {
+                        Log.w("CompanionSync", "Couldn't sync announcements due to database being locked. Migrations are probably running.")
+                    }
+
+                    val i = Intent("SYNC_FINISHED")
                     context.sendBroadcast(i)
                 }
             }
-
-            Fuel.get("/announcements/${app.getUserData().getJSONObject("event").getString("id")}").responseJson { _, _, result ->
-                try {
-                    val announcements = result.get().array()
-
-                    for(i in 0 until announcements.length()) {
-                        val announcementObj = announcements.getJSONObject(i)
-                        val existingAnnouncements = SugarRecord.count<Announcement>(Announcement::class.java, "clear_Id = ?", arrayOf(announcementObj.getString("id")))
-
-                        if(existingAnnouncements == 0L) {
-                            val author = announcementObj.getJSONObject("creator")
-
-                            val announcement = Announcement(
-                                    clearId = announcementObj.getString("id"),
-                                    title = "Announcement",
-                                    message = announcementObj.getString("body"),
-                                    authorName = author.getString("name"),
-                                    authorUsername = author.getString("username"),
-                                    postedAt = announcementObj.getJSONObject("posted_at").getString("date")
-                            )
-
-                            if(!announcementObj.isNull("link")) {
-                                val link = announcementObj.getJSONObject("link")
-                                announcement.linkText = link.getString("text")
-                                announcement.linkUri = link.getString("url")
-                            }
-
-                            announcement.save()
-                        } else {
-                            val announcement = SugarRecord.find<Announcement>(Announcement::class.java, "clear_Id = ?", announcementObj.getString("id"))[0]
-
-                            if(announcement.authorName == null || announcement.authorUsername == null) {
-                                val author = announcementObj.getJSONObject("creator")
-
-                                announcement.authorName = author.getString("name")
-                                announcement.authorUsername = author.getString("username")
-                            }
-
-                            if(announcement.postedAt == null)
-                                announcement.postedAt = announcementObj.getJSONObject("posted_at").getString("date")
-
-                            announcement.save()
-                        }
-                    }
-                } catch(e: SQLiteDatabaseLockedException) {
-                    Log.w("CompanionSync", "Couldn't sync announcements due to database being locked. Migrations are probably running.")
-                }
-
-                val i = Intent("SYNC_FINISHED")
-                context.sendBroadcast(i)
-            }
+        } catch(e: Exception) {
+            val i = Intent("SYNC_FINISHED")
+            context.sendBroadcast(i)
         }
     }
 }

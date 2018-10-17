@@ -36,12 +36,12 @@ import android.util.TypedValue
 
 
 class ScheduleActivityAdapter(val context: Context, private val day: JSONArray) : RecyclerView.Adapter<ScheduleHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ScheduleHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleHolder {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.adapter_schedule_activity, parent, false)
         return ScheduleHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ScheduleHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ScheduleHolder, position: Int) {
         val view = holder!!.itemView
         val activity = day.getJSONObject(position)
 

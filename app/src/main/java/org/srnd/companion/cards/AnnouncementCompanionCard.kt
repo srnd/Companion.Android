@@ -36,7 +36,6 @@ import org.srnd.companion.CompanionApplication
 import org.srnd.companion.R
 import org.srnd.companion.models.Announcement
 import org.srnd.companion.util.getCircularBitmap
-import org.srnd.gosquared.util.BitmapUtils
 import java.net.URL
 
 class AnnouncementCompanionCard(val context: Context, private val announcement: Announcement) : CompanionCard() {

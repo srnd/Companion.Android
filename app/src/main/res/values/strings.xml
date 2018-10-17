@@ -33,6 +33,7 @@
     <string name="check_in_loading">Checking you in…</string>
     <string name="check_in_error">Couldn\'t check you in: %1s</string>
     <string name="show_screen">Show this screen at the door.\n(You can skip to the front of the line.)</string>
+    <string name="wrong_codeday">You\'re at the wrong CodeDay! Contact 888-CODE-230 to transfer your ticket.</string>
 
     <!-- Feed -->
     <string name="welcome_name">Hey there, %1s!</string>
@@ -76,6 +77,18 @@
     <string name="spotify_action">View on Spotify</string>
     <string name="codeday_staff">CodeDay Staff</string>
 
+    <!-- Upsell -->
+    <string name="tickets_on_sale">Tickets for next CodeDay are on sale!</string>
+    <string name="hosted_at">%1s\nHosted at %2s</string>
+    <string name="codeday_ticket">CodeDay Ticket</string>
+    <string name="attendee_info">Attendee: %1s\nEmail: %2s</string>
+    <string name="edit_info">Edit registration info</string>
+    <string name="give_money">Give us your money</string>
+    <string name="loading_event">Loading event info…</string>
+    <string name="error">Oh no!</string>
+    <string name="register_for_codeday">Register for CodeDay</string>
+    <string name="card_info_bad">Your card info doesn\'t look right. Please ensure it\'s entered correctly.</string>
+
     <!-- Loading -->
     <string name="loading_title">Just a sec…</string>
 
@@ -94,7 +107,7 @@
     <!-- Permission Rationales -->
     <string name="permission_location_title">Location Permission Needed</string>
     <string name="permission_location_desc">
-        CodeDay Companion needs access to your location so we can determine when you are at CodeDay. This is used for self check-in.\n\nTo grant this permission, allow it on the next screen.
+        CodeDay Companion needs access to your location so we can determine if you are at CodeDay. This is used for self check-in; your location will not be accessed until then.\n\nTo grant this permission, allow it on the next screen.
     </string>
 
     <!-- Log Out -->
@@ -105,4 +118,5 @@
     <string name="live_chat">Live Chat</string>
     <string name="about">About</string>
     <string name="sign_out">Sign Out</string>
+    <string name="ok">OK</string>
 </resources>

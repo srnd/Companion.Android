@@ -47,9 +47,6 @@ import org.joda.time.DateTime
 import org.json.JSONObject
 import org.srnd.companion.dayof.CompanionAlarmReceiver
 import org.srnd.companion.sync.CompanionSyncAdapter
-import org.srnd.gosquared.GoSquared
-import org.srnd.gosquared.GoSquaredConfig
-import org.srnd.gosquared.models.User
 
 class CompanionApplication : SugarApp() {
     private var cachedUserData: JSONObject? = null
@@ -85,7 +82,7 @@ class CompanionApplication : SugarApp() {
         Fuse.init(cacheDir.absolutePath)
 
         if(BuildConfig.DEBUG) Stetho.initializeWithDefaults(this)
-        FuelManager.instance.basePath = "https://app.codeday.vip/api"
+        FuelManager.instance.basePath = "http://7.0.0.10:3030/api"
 
         if (Build.VERSION.SDK_INT >= 26) {
             val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

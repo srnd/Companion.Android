@@ -1,1 +1,1 @@
-include ':app', ':gosquared'
+include ':app' // , ':gosquared'

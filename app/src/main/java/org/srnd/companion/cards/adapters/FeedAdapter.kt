@@ -34,8 +34,8 @@ class FeedAdapter(var cards: List<CompanionCard>) : RecyclerView.Adapter<Compani
 
     override fun getItemViewType(position: Int): Int = cards[position].layout!!
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CompanionCardHolder {
-        val view = LayoutInflater.from(parent!!.context).inflate(viewType, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CompanionCardHolder {
+        val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return CompanionCardHolder(view)
     }
 
